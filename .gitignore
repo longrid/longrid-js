@@ -1,0 +1,36 @@
+# phpstorm project files
+.idea
+
+# netbeans project files
+nbproject
+
+# zend studio for eclipse project files
+.buildpath
+.project
+.settings
+
+# OS system files
+Thumbs.db
+.DS_Store
+
+# composer vendor dir
+/vendor
+
+
+# composer itself is not needed
+composer.phar
+
+# phpunit itself is not needed
+phpunit.phar
+
+# local phpunit config
+/phpunit.xml
+
+node_modules
+dist
+.tmp
+bower_components
+*.sublime-project
+*.sublime-workspace
+runtime
+

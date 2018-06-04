@@ -1,0 +1,28 @@
+body{
+  background-color: #333;
+}
+.btn {
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: 400;
+  text-align: center;
+  vertical-align: middle;
+  touch-action: manipulation;
+  cursor: pointer;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  padding: 6px 9pt;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 2px;
+  user-select: none;
+}
+.grid__maker{
+  max-width: 1000px;
+  min-height: 100vh;
+  padding: 24px;
+  background-color: #eee;
+  margin:0 auto;
+  display: block;
+  position: relative;
+}
