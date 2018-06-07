@@ -1,8 +1,8 @@
 class BaseElement{
 
     getHtmlBlock(){
-        let block = $.trim(this.getHtml());
-        block = $.parseHTML(block);
+        let block = this.getHtml().trim();
+        block = parseHTML(block);
         return block[0];
     }
     init(){
@@ -42,6 +42,7 @@ class BaseElement{
             },
             imageDragging: false
         });
+        console.log(editor);
     }
     getHtml(){
         return '';

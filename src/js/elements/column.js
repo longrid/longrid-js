@@ -17,28 +17,34 @@ class GridColumn{
     }
     static initButtons(){
         let _self = new GridColumn();
-        $(document).on("click",".grid__column--add_item",function(){
-            let column = $(this).closest('.grid__column');
-            _self.addIconToRow($(this));
-            _self.addItem(column,$(this).data('type'));
+
+        document.addEventListener('click', function(event){
+            let target = event.target;
+            if(target.classList.contains('grid__column--add_item')){
+                let column = target.closest('.grid__column');
+                console.log(column);
+                _self.addIconToRow(target);
+                _self.addItem(column,target.getAttribute('data-type'));
+            }
+            if(target.classList.contains('grid__item--control_item')){
+                target.parentNode.querySelector('.grid__item--control_item').classList.remove('active');
+                target.classList.add('active');
+            }
         });
-        $(document).on("click",'.grid__item--control_item',function(){
-            $(this).parent().find('.grid__item--control_item').removeClass('active');
-            $(this).addClass('active');
-        })
     }
     addIconToRow(item){
-        let icon = item.html();
-        item.closest('.grid__row').find('.grid__row--control').prepend('<div class="grid__row--icon">'+icon+'</div>')
+        let icon = item.innerHTML;
+        let html = parseHTML('<div class="grid__row--icon">'+icon+'</div>')[0];
+        let controls = item.closest('.grid__row').querySelector('.grid__row--control');
+        controls.insertBefore(html,controls.firstChild);
     }
     addItem(column,type){
         let item = new this.items_classes[type]();
         let html_block = item.getHtmlBlock();
-        let container = column.find('.grid__column--container');
-            container.html('');
-            container.append(html_block);
+        let container = column.querySelector('.grid__column--container');
+            container.innerHTML = '';
+            container.appendChild(html_block);
         item.init(container);
-
     }
     collectItemData(column){
         let items = [];
@@ -54,16 +60,16 @@ class GridColumn{
 
     }
     add(container){
-        let block = $.trim(this.getHtml());
-        block = $.parseHTML(block);
+        let block = this.getHtml().trim();
+        block = parseHTML(block);
         block = block[0];
-        container.append(block);
+        container.appendChild(block);
     }
     removeRow(index){
 
     }
     getHtml(){
-        return $('#columnBlock').html();
+        return document.getElementById('columnBlock').innerHTML;
     }
     getStructure(){
         return this.items;

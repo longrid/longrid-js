@@ -6,7 +6,7 @@ class TextElement extends BaseElement{
 
 
     getHtml(){
-        return $('#textBlock').html();
+        return document.getElementById('textBlock').innerHTML;
     }
     getObject(item) {
         return {

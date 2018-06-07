@@ -12,16 +12,16 @@ class GridRow{
         this.addColumn(block);
     }
     addAfter(container,row){
-        let block = $.trim(this.getHtml());
-        block = $.parseHTML(block);
+        let block = this.getHtml().trim();
+        block = parseHTML(block);
         block = block[0];
-        $(block).insertAfter(row);
-        this.addColumn($(block));
+        row.parentNode.insertBefore(block, row.nextSibling);
+        //$(block).insertAfter(row);
+        this.addColumn(block);
     }
     addColumn(row){
-        return false;
         let column = new GridColumn();
-        column.add(row.find('.grid__row--container'));
+        column.add(row.querySelector('.grid__row--container'));
     }
     collectColumnData(row){
         let column = new GridColumn();
@@ -36,22 +36,27 @@ class GridRow{
     }
     static initButtons(){
         let _self = new GridRow();
-        $(document).on("click",".grid__row--collapse",function(){
-            _self.collapse($(this).closest('.grid__row').find('.grid__row--container'));
-        });
 
-        $(document).on("click",".collapse_all",function(){
-            let is_collapsed = $(this).attr('data-state');
-            if(is_collapsed == '1'){
-                _self.collapseAll('open');
-                $(this).attr('data-state',0);
-            } else{
-                _self.collapseAll('close');
-                $(this).attr('data-state',1);
+
+        document.addEventListener('click', function(event){
+            let target = event.target;
+            if(target.classList.contains('.grid__row--collapse')){
+                _self.collapse(target.closest('.grid__row').querySelector('.grid__row--container'));
+            }
+            if(target.classList.contains('collapse_all')){
+                let is_collapsed = this.getAttribute('data-state');
+                if(is_collapsed == '1'){
+                    _self.collapseAll('open');
+                    target.setAttribute('data-state',0);
+                } else{
+                    _self.collapseAll('close');
+                    target.setAttribute('data-state',1);
+                }
+
             }
 
-
         });
+
     }
     collapseAll(state){
         let _self = this;
