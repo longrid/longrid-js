@@ -45,8 +45,8 @@ class ImageElement extends BaseElement{
         });
 
     }
-    getHtml(){
-        return $('#imageBlock').html();
+    getTemplateId(){
+        return 'imageBlock';
     }
     getObject(item) {
         return {

@@ -37,6 +37,7 @@
   "author": "Mamyraimov Asset",
   "license": "ISC",
   "dependencies": {
-    "medium-editor": "^5.23.3"
+    "medium-editor": "^5.23.3",
+    "sortablejs": "^1.7.0"
   }
 }

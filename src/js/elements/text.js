@@ -4,10 +4,10 @@ class TextElement extends BaseElement{
         this.initMedium();
     }
 
-
-    getHtml(){
-        return document.getElementById('textBlock').innerHTML;
+    getTemplateId(){
+        return 'textBlock';
     }
+
     getObject(item) {
         return {
             'type': item.data('type'),

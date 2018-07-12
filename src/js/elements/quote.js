@@ -1,6 +1,6 @@
-class CitateElement extends BaseElement{
-    getHtml(){
-        return $('#citateBlock').html();
+class QuoteElement extends BaseElement{
+    getTemplateId(){
+        return 'quoteBlock';
     }
     getObject(item){
         return {

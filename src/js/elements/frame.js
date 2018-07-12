@@ -1,7 +1,8 @@
 class FrameElement extends BaseElement{
-    getHtml(){
-        return $('#frameBlock').html();
+    getTemplateId(){
+        return 'frameBlock';
     }
+
     getObject(item) {
         return {
             'type': item.data('type'),

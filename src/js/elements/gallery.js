@@ -95,8 +95,9 @@ class GalleryElement extends BaseElement {
         });
         container.remove();
     }
-    getHtml() {
-        return $('#galleryBlock').html();
+
+    getTemplateId(){
+        return 'galleryBlock';
     }
     getItemsObject(item){
         let items = [];

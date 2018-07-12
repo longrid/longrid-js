@@ -4,21 +4,27 @@ class GridRow{
         this.raw = raw;
         this.init()
     }
-    add(container){
-        let block = this.getHtml().trim();
-        block = parseHTML(block);
+
+    /**
+     * Если row не null, то добавляем строку после этого row
+     * @param container
+     * @param row
+     */
+    add(container,row = null){
+        let block = GridHelper.getHtml(this.getTemplateId()).trim();
+        block = GridHelper.parseHTML(block);
         block = block[0];
-        container.appendChild(block);
+        if(row !== null){
+            row.parentNode.insertBefore(block, row.nextSibling);
+        } else{
+            container.appendChild(block);
+        }
         this.addColumn(block);
     }
-    addAfter(container,row){
-        let block = this.getHtml().trim();
-        block = parseHTML(block);
-        block = block[0];
-        row.parentNode.insertBefore(block, row.nextSibling);
-        //$(block).insertAfter(row);
-        this.addColumn(block);
+    getTemplateId(){
+        return 'rowBlock';
     }
+
     addColumn(row){
         let column = new GridColumn();
         column.add(row.querySelector('.grid__row--container'));
@@ -40,10 +46,10 @@ class GridRow{
 
         document.addEventListener('click', function(event){
             let target = event.target;
-            if(target.classList.contains('.grid__row--collapse')){
+            if(target.matches('.grid__row--collapse')){
                 _self.collapse(target.closest('.grid__row').querySelector('.grid__row--container'));
             }
-            if(target.classList.contains('collapse_all')){
+            if(target.matches('.collapse_all')){
                 let is_collapsed = this.getAttribute('data-state');
                 if(is_collapsed == '1'){
                     _self.collapseAll('open');
@@ -105,9 +111,7 @@ class GridRow{
 
     }
 
-    getHtml(){
-        return document.getElementById('rowBlock').innerHTML;
-    }
+
     getStructure(){
         return this.columns;
     }

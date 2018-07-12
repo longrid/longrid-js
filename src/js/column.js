@@ -4,29 +4,29 @@ class GridColumn{
         this.raw = raw;
         this.init();
         this.items_classes = {
-            'audio': AudioElement,
-            'citate': CitateElement,
-            'facts': FactElement,
             'frame': FrameElement,
             'gallery': GalleryElement,
-            'gif': GifElement,
             'image': ImageElement,
             'text': TextElement,
-            'video': VideoElement,
+            'quote': QuoteElement,
         }
+    }
+
+    getTemplateId(){
+        return 'columnBlock';
     }
     static initButtons(){
         let _self = new GridColumn();
 
         document.addEventListener('click', function(event){
             let target = event.target;
-            if(target.classList.contains('grid__column--add_item')){
+            if(target.matches('.grid__column--add_item')){
                 let column = target.closest('.grid__column');
                 console.log(column);
                 _self.addIconToRow(target);
                 _self.addItem(column,target.getAttribute('data-type'));
             }
-            if(target.classList.contains('grid__item--control_item')){
+            if(target.matches('.grid__item--control_item')){
                 target.parentNode.querySelector('.grid__item--control_item').classList.remove('active');
                 target.classList.add('active');
             }
@@ -34,7 +34,7 @@ class GridColumn{
     }
     addIconToRow(item){
         let icon = item.innerHTML;
-        let html = parseHTML('<div class="grid__row--icon">'+icon+'</div>')[0];
+        let html = GridHelper.parseHTML('<div class="grid__row--icon">'+icon+'</div>')[0];
         let controls = item.closest('.grid__row').querySelector('.grid__row--control');
         controls.insertBefore(html,controls.firstChild);
     }
@@ -60,17 +60,15 @@ class GridColumn{
 
     }
     add(container){
-        let block = this.getHtml().trim();
-        block = parseHTML(block);
+        let block = GridHelper.getHtml(this.getTemplateId()).trim();
+        block = GridHelper.parseHTML(block);
         block = block[0];
         container.appendChild(block);
     }
     removeRow(index){
 
     }
-    getHtml(){
-        return document.getElementById('columnBlock').innerHTML;
-    }
+
     getStructure(){
         return this.items;
     }

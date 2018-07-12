@@ -12,16 +12,16 @@ const postcssMatches = require('postcss-selector-matches');
 
 gulp.task('babel', () => {
     return gulp.src(['src/js/**/*.js'])
-        .pipe($.sourcemaps.init())
+        //.pipe($.sourcemaps.init())
         .pipe($.babel())
-        .pipe($.sourcemaps.write())
+      //  .pipe($.sourcemaps.write())
         .pipe(gulp.dest('.tmp/js'));
 });
 
 gulp.task('styles', [], () => {
     return gulp.src('src/scss/{,*/}*.scss')
         .pipe($.plumber())
-        .pipe($.sourcemaps.init())
+        //.pipe($.sourcemaps.init())
         .pipe($.sass.sync({
             outputStyle: 'expanded',
             precision: 10,
@@ -36,17 +36,21 @@ gulp.task('styles', [], () => {
             postcssCustomMedia(),
             postcssMatches(),
         ]))
-        .pipe($.sourcemaps.write())
+       // .pipe($.sourcemaps.write())
         .pipe(gulp.dest('.tmp/css'));
 });
 
 gulp.task('build', ['babel', 'styles'], () => {
     return gulp.src('src/*.html')
         .pipe($.useref({searchPath: ['.tmp', '.']}))
- /*       .pipe($.if('*.js', $.uglify().on('error', function (err) {
+       .pipe($.if('*.js', $.uglify().on('error', function (err) {
             console.log(err);
             this.end();
-        })))*/
+        })))
+        .pipe($.if('*.css', $.minifyCss({
+            compatibility: '*',
+            processImport: false,
+        })))
         .pipe(gulp.dest('dist'));
 });
 

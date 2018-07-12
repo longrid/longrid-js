@@ -20,20 +20,11 @@ class Grid {
             let icons = this.querySelector('.grid__column .icons');
             let controls = this.querySelector('.grid__row--control');
             if(icons.length){
-                let html = parseHTML('<div class="grid__row--icon">'+icons.innerHTML+'</div>');
+                let html = GridHelper.parseHTML('<div class="grid__row--icon">'+icons.innerHTML+'</div>');
                 controls.insertBefore(html,controls.firstChild);
                 icons.remove();
             }
         });
-       /**
-        $('.grid__row').each(function(){
-            let icons = $(this).find('.grid__column .icons');
-            if(icons.length){
-                $(this).find('.grid__row--control').prepend('<div class="grid__row--icon">'+icons.html()+'</div>');
-                icons.remove();
-            }
-        });
-        */
     }
     collectGridData() {
         let row = new GridRow();
@@ -53,13 +44,13 @@ class Grid {
 
         document.addEventListener('click', function(event){
             let target = event.target;
-            if(target.classList.contains('add-block')){
+            if(target.matches('.add-block')){
                 _self.addRowBlock();
             }
-            if(target.classList.contains('add-inblock')){
+            if(target.matches('.add-inblock')){
                 _self.addRowBlockAfter( target.closest('.grid__row') );
             }
-            if(target.classList.contains('grid__row--remove')){
+            if(target.matches('.grid__row--remove')){
                 _self.removeRow( target.closest('.grid__row') );
             }
         });
@@ -83,7 +74,7 @@ class Grid {
     }
     addRowBlockAfter(item){
         let row = new GridRow();
-        row.addAfter(this.container,item);
+        row.add(this.container,item);
     }
 
     removeRow(row) {
