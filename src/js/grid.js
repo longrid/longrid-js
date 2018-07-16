@@ -3,15 +3,26 @@ class Grid {
         this.rows = [];
         this.container = container;
         this.raw = raw;
+        this.itemTypes = {
+            'text': TextElement,
+        }
     }
 
+    addItemType(name,instance_class){
+        let instance = new instance_class();
+        if(instance instanceof AbstractElement){
+            this.itemTypes[name] = instance;
+        } else{
+            throw name + ' should be instance of AbstractElement';
+        }
+    }
     init() {
         Grid.initButtons(this.container);
-        GridRow.initButtons();
-        GridColumn.initButtons();
+        GridRow.initButtons(this);
+        GridColumn.initButtons(this);
         BaseElement.initFromHtml();
-        ImageElement.initFromHtml();
-        GalleryElement.initFromHtml();
+        //ImageElement.initFromHtml();
+       //GalleryElement.initFromHtml();
         this.initSortable();
         this.initRowIcons();
     }
@@ -69,11 +80,11 @@ class Grid {
     }
 
     addRowBlock() {
-        let row = new GridRow();
+        let row = new GridRow(this);
         row.add(this.container);
     }
     addRowBlockAfter(item){
-        let row = new GridRow();
+        let row = new GridRow(this);
         row.add(this.container,item);
     }
 

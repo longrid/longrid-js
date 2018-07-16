@@ -1,4 +1,4 @@
-class BaseElement{
+class BaseElement extends AbstractElement{
 
     getHtmlBlock(){
         let block = GridHelper.getHtml(this.getTemplateId()).trim();
@@ -52,6 +52,7 @@ class BaseElement{
     getObject(item){
         return {};
     }
+
     static initFromHtml(){
         let _self = new BaseElement();
         _self.initMedium();

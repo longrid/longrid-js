@@ -1,7 +1,7 @@
 class GridRow{
-    constructor(raw = '') {
+    constructor(grid = null) {
         this.columns = [];
-        this.raw = raw;
+        this.grid = grid;
         this.init()
     }
 
@@ -26,11 +26,11 @@ class GridRow{
     }
 
     addColumn(row){
-        let column = new GridColumn();
+        let column = new GridColumn(this.grid);
         column.add(row.querySelector('.grid__row--container'));
     }
     collectColumnData(row){
-        let column = new GridColumn();
+        let column = new GridColumn(this.grid);
         let _self =  this;
         let columns = [];
         row.find('.grid__column').each(function(){
@@ -40,8 +40,8 @@ class GridRow{
             'columns' : columns
         };
     }
-    static initButtons(){
-        let _self = new GridRow();
+    static initButtons(grid){
+        let _self = new GridRow(grid);
 
 
         document.addEventListener('click', function(event){
@@ -49,38 +49,12 @@ class GridRow{
             if(target.matches('.grid__row--collapse')){
                 _self.collapse(target.closest('.grid__row').querySelector('.grid__row--container'));
             }
-            if(target.matches('.collapse_all')){
-                let is_collapsed = this.getAttribute('data-state');
-                if(is_collapsed == '1'){
-                    _self.collapseAll('open');
-                    target.setAttribute('data-state',0);
-                } else{
-                    _self.collapseAll('close');
-                    target.setAttribute('data-state',1);
-                }
 
-            }
 
         });
 
     }
-    collapseAll(state){
-        let _self = this;
 
-        $('.grid__row').each(function(){
-            let container = $(this).find('.grid__row--container');
-            if(state === 'open'){
-                if($(this).hasClass('collapsed')){
-                    _self.collapse(container);
-                }
-            } else{
-                if(!$(this).hasClass('collapsed')){
-                    _self.collapse(container);
-                }
-            }
-
-        })
-    }
     collapse(row){
         let parent = row.closest('.grid__row');
 

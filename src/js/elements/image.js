@@ -6,8 +6,11 @@ class ImageElement extends BaseElement{
         let _self = this;
         this.initMedium();
         this.initImageUpload();
-        $(document).on("click",'.grid__item--image .image__placeholder .remove',function(){
-            _self.removeImage($(this).closest('.grid__item--image'));
+        document.addEventListener('click', function(event){
+            let target = event.target;
+            if(target.matches('.grid__item--image .image__placeholder .remove')){
+                _self.removeImage(target.closest('.grid__item--image'));
+            }
         });
 
     }

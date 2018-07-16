@@ -1,22 +1,16 @@
 class GridColumn{
-    constructor(raw = '') {
+    constructor(grid = null) {
         this.items = [];
-        this.raw = raw;
+        this.grid = grid;
         this.init();
-        this.items_classes = {
-            'frame': FrameElement,
-            'gallery': GalleryElement,
-            'image': ImageElement,
-            'text': TextElement,
-            'quote': QuoteElement,
-        }
+
     }
 
     getTemplateId(){
         return 'columnBlock';
     }
-    static initButtons(){
-        let _self = new GridColumn();
+    static initButtons(grid){
+        let _self = new GridColumn(grid);
 
         document.addEventListener('click', function(event){
             let target = event.target;
@@ -39,7 +33,7 @@ class GridColumn{
         controls.insertBefore(html,controls.firstChild);
     }
     addItem(column,type){
-        let item = new this.items_classes[type]();
+        let item = new this.grid.itemTypes[type]();
         let html_block = item.getHtmlBlock();
         let container = column.querySelector('.grid__column--container');
             container.innerHTML = '';
