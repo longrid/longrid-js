@@ -3,18 +3,26 @@ class Grid {
         this.rows = [];
         this.container = container;
         this.raw = raw;
-        this.itemTypes = {
+        this.items = {
             'text': TextElement,
         }
     }
 
-    addItemType(name,instance_class){
+
+    addItem(name,instance_class){
         let instance = new instance_class();
-        if(instance instanceof AbstractElement){
-            this.itemTypes[name] = instance;
-        } else{
-            throw name + ' should be instance of AbstractElement';
+        for (let name of Object.getOwnPropertyNames(Object.getPrototypeOf((new AbstractElement)))) {
+            let method = instance[name];
+            // Supposedly you'd like to skip constructor
+            if (!(method instanceof Function) || method === instance_class){
+                if(name !== 'constructor'){
+                    if (typeof instance[name] !== "function") {
+                        throw new Error(`${name}() should be implement`);
+                    }
+                }
+            }
         }
+        this.items[name] = instance;
     }
     init() {
         Grid.initButtons(this.container);
@@ -27,9 +35,9 @@ class Grid {
         this.initRowIcons();
     }
     initRowIcons(){
-        [].forEach.call(document.querySelectorAll('.grid__row'),function(item){
+        [].forEach.call(document.querySelectorAll('.grid__column'),function(item){
             let icons = this.querySelector('.grid__column .icons');
-            let controls = this.querySelector('.grid__row--control');
+            let controls = this.querySelector('.grid__column--control');
             if(icons.length){
                 let html = GridHelper.parseHTML('<div class="grid__row--icon">'+icons.innerHTML+'</div>');
                 controls.insertBefore(html,controls.firstChild);

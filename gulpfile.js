@@ -43,10 +43,10 @@ gulp.task('styles', [], () => {
 gulp.task('build', ['babel', 'styles'], () => {
     return gulp.src('src/*.html')
         .pipe($.useref({searchPath: ['.tmp', '.']}))
-       .pipe($.if('*.js', $.uglify().on('error', function (err) {
+       /*.pipe($.if('*.js', $.uglify().on('error', function (err) {
             console.log(err);
             this.end();
-        })))
+        })))*/
         .pipe($.if('*.css', $.minifyCss({
             compatibility: '*',
             processImport: false,

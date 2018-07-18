@@ -45,7 +45,6 @@ class BaseElement extends AbstractElement{
             },
             imageDragging: false
         });
-        console.log(editor);
     }
 
     //return Object for column

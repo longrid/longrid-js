@@ -19,8 +19,5 @@ class Longread{
 }
 
 
-class newElement extends AbstractElement{
-}
     let longridMaker = new Longread();
-    longridMaker.grid.addItemType('new',newElement);
     longridMaker.init();

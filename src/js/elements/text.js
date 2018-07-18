@@ -7,7 +7,12 @@ class TextElement extends BaseElement{
     getTemplateId(){
         return 'textBlock';
     }
-
+    getTitle(){
+        return "Текст";
+    }
+    getIcon(){
+        return '<i class="fa fa-font"></i>';
+    }
     getObject(item) {
         return {
             'type': item.data('type'),

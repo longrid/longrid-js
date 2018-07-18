@@ -18,59 +18,6 @@
     </div>
 </div>
 
-<script id="audioBlock" type="text/template">
-    <div class="grid__item" data-type="audio">
-        <div class="grid__item--audio">
-
-        </div>
-    </div></script>
-<script id="galleryBlock" type="text/template">
-    <div class="grid__item" data-type="gallery">
-        <div class="grid__item--control">
-            <div class="grid__item--control_action add_image">
-                <i class="fa fa-picture-o"></i> Добавить фото
-                <input type="file" name="file" class="add-images"
-                       data-url="/admin.php/pages/longrid2/add-images"
-                       multiple/>
-            </div>
-        </div>
-        <div class="grid__item--gallery">
-        </div>
-    </div></script>
-<script id="quoteBlock" type="text/template">
-    <div class="grid__item" data-type="quote">
-        <div class="grid__item--control">
-
-        </div>
-        <div class="grid__item--quote">
-            <div class="editable">
-            </div>
-        </div>
-    </div>
-</script>
-<script id="factsBlock" type="text/template">
-    <div class="grid__item" data-type="facts">
-        <div class="grid__item--facts">
-            <div class="editable">
-            </div>
-        </div>
-    </div></script>
-<script id="frameBlock" type="text/template">
-    <div class="grid__item" data-type="frame">
-        <div class="grid__item--control">
-            <div class="main">
-                <div class="grid__item--control_item   active "
-                " data-type="default">Обычный
-            </div>
-            <div class="grid__item--control_item "
-            " data-type="adaptive">Адаптивный
-        </div>
-    </div>
-    </div>
-    <div class="grid__item--frame">
-        <textarea placeholder="Введите HTML"></textarea>
-    </div>
-    </div></script>
 <script id="textBlock" type="text/template">
     <div class="grid__item" data-type="text">
         <div class="grid__item--control">
@@ -82,73 +29,15 @@
         </div>
     </div></script>
 
-<script id="imageBlock" type="text/template">
-
-    <div class="grid__item" data-type="image">
-        <div class="grid__item--control">
-            <div class="left">
-                <div class="grid__item--control_action add_image">
-                    <i class="fa fa-picture-o"></i> Добавить фото
-                    <input type="file" name="file" class="add-image"
-                           data-url="/admin.php/pages/longrid2/add-images"
-                    />
-                </div>
-
-            </div>
-            <div class="main">
-
-                <div class="grid__item--control_item   active "
-                " data-type="default">Обычная
-            </div>
-            <div class="grid__item--control_item "
-            " data-type="left">Слева
-        </div>
-        <div class="grid__item--control_item "
-        " data-type="right">Справа
-    </div>
-    <div class="grid__item--control_item "" data-type="portrait">Портретная</div>
-    <div class="grid__item--control_item "" data-type="wide">Широкая</div>
-    <div class="grid__item--control_item "" data-type="full">На полную</div>
-    <div class="grid__item--control_item "" data-type="blur">Blurred</div>
-    </div>
-    </div>
-    <div class="grid__item--image">
-        <div class="image__placeholder">
-            <div class="preview"></div>
-            <div class="remove grid__btn">Удалить фото</div>
-        </div>
-        <div class="editable">
-
-        </div>
-
-    </div>
-    </div></script>
-<script id="rowBlock" type="text/template">
-    <div class="grid__row">
-        <div class="white_background">
-            <div class="grid__row--control">
-                <div class="grid__row--move">
-                    <i class="fa fa-arrows"></i>
-                    <span class="grid__row--move_title"></span>
-                </div>
-                <div class="grid__row--remove"><i class="fa fa-trash"></i> Удалить ряд</div>
-                <div class="grid__row--collapse"><i class="fa fa-caret-up"></i></div>
-            </div>
-            <div class="grid__row--container">
-            </div>
-        </div>
-        <div class="grid__row--add">
-            <div class="btn add-inblock" data-type="row"><i class="fa fa-plus"></i> Добавить ряд</div>
-        </div>
-    </div>
-</script>
 <script id="columnBlock" type="text/template">
     <div class="grid__column" data-width="1">
         <div class="grid__column--control">
-
+            <div class="grid__column--move">
+                <i class="fa fa-arrows"></i>
+            </div>
         </div>
-        <div class="grid__column--container">
-
+        <div class="grid__column--container col_4">
+            .
             <div class="empty">
                 <div class="items__list">
                     <div class="grid__column--add_item" data-type="text" data-title="Текст" title="Текст">

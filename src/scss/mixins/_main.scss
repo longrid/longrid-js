@@ -4,3 +4,8 @@
 @import "image";
 @import "opacity";
 @import "vendor-prefixes";
+
+@mixin column_item_width($base,$i) {
+  width:  $base*$i*1%;
+  flex-basis: $base*$i*1%;
+}

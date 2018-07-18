@@ -28,6 +28,10 @@
   }
 }
 
+@mixin item_width($base,$i) {
+  width:  $base*$i*1%;
+  flex-basis: $base*$i*1%;
+}
 .grid {
 
   .editable, .image__placeholder, textarea {
@@ -54,10 +58,7 @@
     &--add{
 
     }
-    &--control {
-      display: flex;
-      align-items: center;
-    }
+
     &--move, &--remove, &--collapse, &--icon {
       min-height: 30px;
       min-width: 30px;
@@ -88,6 +89,10 @@
       background-color: #4CC25F;
       margin-right: 8px;
       text-align: center;
+    }
+    &--control {
+      display: flex;
+      align-items: center;
     }
     &--remove {
       background-color: #F57171;
@@ -122,9 +127,32 @@
     }
     &--container {
       padding-top: 24px;
+      display: flex;
     }
   }
   &__column {
+    border:1px solid #ddd;
+    transition: all .15s ease-in-out;
+    &--move{
+      @extend .grid__row--move;
+      border-radius: 0;
+    }
+    &--action{
+      @extend .grid__row--icon;
+      & > *{
+        pointer-events: none;
+      }
+    }
+    &--control {
+      display: flex;
+      align-items: center;
+      .grid__row--icon{
+        border-radius: 0;
+      }
+      *:last-child{
+        margin-right: 0;
+      }
+    }
     .empty {
       .items__list {
         padding: 16px 0;
@@ -135,10 +163,10 @@
     &--add_item {
       background: #4CC25F;
       border-radius: 4px;
-      padding: 20px;
-      font-size: 18px;
+      padding: 4px;
+      font-size: 13px;
       color: #fff;
-      margin-right: 8px;
+      margin-right: 4px;
       cursor: pointer;
       & > *{
         pointer-events: none;
@@ -517,3 +545,4 @@
 .overflow__hidden{
   overflow:hidden;
 }
+
