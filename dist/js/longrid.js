@@ -586,7 +586,7 @@ var GridColumn = function () {
     }, {
         key: 'canAdd',
         value: function canAdd(item) {
-            return this.getAllWidth(item) + item.getAttribute('data-width') > this.maxWidth;
+            return this.getAllWidth(item) + item.getAttribute('data-width') < this.maxWidth;
         }
     }, {
         key: 'changeWidth',
@@ -620,6 +620,11 @@ var GridColumn = function () {
         key: 'changeWidthToLeft',
         value: function changeWidthToLeft(target) {
             this.changeWidth(target, false);
+        }
+    }, {
+        key: 'isEmpty',
+        value: function isEmpty(column) {
+            return column.classList.contains('empty');
         }
     }, {
         key: 'setAllWidth',
@@ -660,6 +665,8 @@ var GridColumn = function () {
             container.innerHTML = '';
             container.appendChild(html_block);
             item.init(container);
+
+            column.classList.remove('empty');
         }
     }, {
         key: 'collectItemData',
@@ -696,7 +703,7 @@ var GridColumn = function () {
             var column_width = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 4;
 
             var _self = this;
-            var template = ' <div class="grid__column" data-width="' + column_width + '">\n        <div class="grid__column--control">\n            <div class="grid__column--move">\n                <i class="fa fa-arrows"></i>\n            </div>\n             <div class="grid__column--action" data-action="changeWidthToLeft">\n                <i class="fa fa-angle-left"></i>\n            </div> \n            <div class="grid__column--action" data-action="changeWidthToRight">\n                <i class="fa fa-angle-right"></i>\n            </div>\n        </div>\n        <div class="grid__column--container">\n           \n            <div class="empty"> \n                <div class="items__list">\n                    ' + _self.getColumnItems() + '                   \n                </div>\n                <div class="select__item">\n\n                </div>\n\n            </div>\n        </div>\n    </div>';
+            var template = ' <div class="grid__column empty" data-width="' + column_width + '">\n        <div class="grid__column--control">\n            <div class="grid__column--move">\n                <i class="fa fa-arrows"></i>\n            </div>\n             <div class="grid__column--action" data-action="changeWidthToLeft">\n                <i class="fa fa-angle-left"></i>\n            </div> \n            <div class="grid__column--action" data-action="changeWidthToRight">\n                <i class="fa fa-angle-right"></i>\n            </div>\n        </div>\n        <div class="grid__column--container">\n           \n            <div class="empty"> \n                <div class="items__list">\n                    ' + _self.getColumnItems() + '                   \n                </div>\n                <div class="select__item">\n\n                </div>\n\n            </div>\n        </div>\n    </div>';
             return template.trim();
         }
     }, {
@@ -721,7 +728,6 @@ var GridColumn = function () {
                 var target = event.target;
                 if (target.matches('.grid__column--add_item')) {
                     var column = target.closest('.grid__column');
-                    console.log(column);
                     _self.addIconToRow(target);
                     _self.addItem(column, target.getAttribute('data-type'));
                 }
@@ -843,12 +849,8 @@ var GridRow = function () {
                 handle: ".grid__column--move", // Restricts sort start click/touch to the specified element
                 draggable: ".grid__column", // Specifies which items inside the element should be sortable
                 onSort: function onSort(evt) {
-                    console.log(evt.to);
-                    console.log(evt);
-                    if (evt.action === 'add') {
-                        console.log(evt.to);
-                        evt.preventDefault();
-                    }
+
+                    if (evt.action === 'add') {}
                 }
             });
             [].forEach.call(container.getElementsByClassName('grid__row--container'), function (el) {

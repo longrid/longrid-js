@@ -90,11 +90,9 @@ class GridRow{
             handle: ".grid__column--move", // Restricts sort start click/touch to the specified element
             draggable: ".grid__column", // Specifies which items inside the element should be sortable
             onSort:function(evt){
-                console.log(evt.to);
-                console.log(evt);
+
                 if(evt.action === 'add') {
-                    console.log(evt.to);
-                    evt.preventDefault();
+
                 }
              }
         });

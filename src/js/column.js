@@ -10,7 +10,7 @@ class GridColumn {
         return 'columnBlock';
     }
     canAdd(item){
-        return ( this.getAllWidth(item) + item.getAttribute('data-width')) > this.maxWidth;
+        return ( this.getAllWidth(item) + item.getAttribute('data-width')) < this.maxWidth;
     }
     static initButtons(grid) {
         let _self = new GridColumn(grid);
@@ -19,7 +19,6 @@ class GridColumn {
             let target = event.target;
             if (target.matches('.grid__column--add_item')) {
                 let column = target.closest('.grid__column');
-                console.log(column);
                 _self.addIconToRow(target);
                 _self.addItem(column, target.getAttribute('data-type'));
             }
@@ -44,7 +43,7 @@ class GridColumn {
             let nextWidth = currentWidth +1;
             let nextAllWidth = allWidth + 1;
             if(nextAllWidth <= this.maxWidth){
-                column.setAttribute('data-width',nextWidth.toString())
+                column.setAttribute('data-width',nextWidth.toString());
             }
         } else{
             let nextWidth = currentWidth - 1;
@@ -59,6 +58,10 @@ class GridColumn {
     }
     changeWidthToLeft(target){
         this.changeWidth(target,false);
+    }
+
+    isEmpty(column){
+        return column.classList.contains('empty');
     }
     setAllWidth(target){
        let row =  target.closest('.grid__row');
@@ -90,6 +93,8 @@ class GridColumn {
         container.innerHTML = '';
         container.appendChild(html_block);
         item.init(container);
+
+        column.classList.remove('empty');
     }
 
     collectItemData(column) {
@@ -121,7 +126,7 @@ class GridColumn {
 
     getTemplate(column_width = 4) {
         let _self = this;
-        let template = ` <div class="grid__column" data-width="${column_width}">
+        let template = ` <div class="grid__column empty" data-width="${column_width}">
         <div class="grid__column--control">
             <div class="grid__column--move">
                 <i class="fa fa-arrows"></i>
