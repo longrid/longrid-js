@@ -1,12 +1,13 @@
 class Longread{
     constructor(){
         this.data = {};
-        this.grid = new Grid(document.getElementById('grid__container'));
+        this.grid = null;
     }
     initButtons(){
 
     }
     init(){
+        this.grid =  new Grid(document.getElementById('grid__container'));
         this.grid.init();
         this.initButtons();
     }

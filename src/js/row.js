@@ -1,17 +1,27 @@
 class GridRow{
     constructor(grid = null) {
-        this.columns = [];
+        this.columns = new Map();
+        this.container = null;
         this.grid = grid;
+        this.id = null;
+    }
+    getNewElementId() {
+
+        let keys = [...this.columns.keys()];
+        if (keys.length > 0) {
+            return Math.max(...keys) + 1;
+        } else {
+            return 1;
+        }
 
     }
-
     /**
      * Если row не null, то добавляем строку после этого row
      * @param container
      * @param row
      */
-    add(container,row = null){
-        let block = this.getTemplate();
+    add(container,row = null,id){
+        let block = this.getTemplate(id);
         block = GridHelper.parseHTML(block);
         block = block[0];
         if(row !== null){
@@ -19,6 +29,8 @@ class GridRow{
         } else{
             container.appendChild(block);
         }
+        this.container = block;
+        this.id = id;
         this.init();
         this.addColumn(block);
     }
@@ -27,8 +39,15 @@ class GridRow{
     }
 
     addColumn(row){
-        let column = new GridColumn(this.grid);
-        column.add(row.querySelector('.grid__row--container'));
+        let id = this.getNewElementId();
+        let column = new GridColumn(this);
+        column.add(this.container,null,id);
+        this.addColumnToRow(id, column);
+
+    }
+    addColumnToRow(id,column){
+        this.columns.set(id,column);
+
     }
     collectColumnData(row){
         let column = new GridColumn(this.grid);
@@ -41,9 +60,8 @@ class GridRow{
             'columns' : columns
         };
     }
-    static initButtons(grid){
-        let _self = new GridRow(grid);
-
+    initButtons(){
+        let _self = this;
 
         document.addEventListener('click', function(event){
             let target = event.target;
@@ -79,6 +97,7 @@ class GridRow{
         row.slideToggle();
     }
     init(){
+        this.initButtons();
         this.initColumnSorting();
     }
     initColumnSorting() {
@@ -106,10 +125,17 @@ class GridRow{
     removeColumn(index){
 
     }
+    setAllWidth(){
+        let allWidth  = 0;
+        [].forEach.call(this.container.querySelectorAll('.grid__column'),function(item){
+            allWidth = allWidth +  parseInt(item.getAttribute('data-width'))
+        });
 
+        this.container.setAttribute('data-allWidth',allWidth);
+    }
 
-    getTemplate(columns = 4){
-        let template = `<div class="grid__row col_${columns}">
+    getTemplate(id,columns = 4){
+        let template = `<div class="grid__row col_${columns}" data-id="${id}">
         <div class="white_background">
             <div class="grid__row--control">
                 <div class="grid__row--move">

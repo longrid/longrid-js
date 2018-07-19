@@ -565,15 +565,14 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var GridColumn = function () {
-    function GridColumn() {
-        var grid = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+    function GridColumn(row) {
         var maxWidth = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 4;
         var allWidth = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 4;
 
         _classCallCheck(this, GridColumn);
 
-        this.items = [];
-        this.grid = grid;
+        this.items = {};
+        this.row = row;
         this.init();
         this.maxWidth = maxWidth;
     }
@@ -586,7 +585,31 @@ var GridColumn = function () {
     }, {
         key: 'canAdd',
         value: function canAdd(item) {
-            return this.getAllWidth(item) + item.getAttribute('data-width') < this.maxWidth;
+            return this.getAllWidth(item) + item.getAttribute('data-width') <= this.maxWidth;
+        }
+    }, {
+        key: 'initButtons',
+        value: function initButtons() {
+            var _self = this;
+
+            document.addEventListener('click', function (event) {
+                var target = event.target;
+                if (target.matches('.grid__column--add_item')) {
+                    var column = target.closest('.grid__column');
+                    _self.addIconToRow(target);
+                    _self.addItem(column, target.getAttribute('data-type'));
+                }
+                if (target.matches('.grid__item--control_item')) {
+                    target.parentNode.querySelector('.grid__item--control_item').classList.remove('active');
+                    target.classList.add('active');
+                }
+                if (target.matches('.grid__column--action')) {
+                    var action = target.getAttribute('data-action');
+                    if (_self[action] instanceof Function) {
+                        _self[action](target);
+                    }
+                }
+            });
         }
     }, {
         key: 'changeWidth',
@@ -609,7 +632,7 @@ var GridColumn = function () {
                     column.setAttribute('data-width', _nextWidth.toString());
                 }
             }
-            this.setAllWidth(target);
+            this.row.setAllWidth();
         }
     }, {
         key: 'changeWidthToRight',
@@ -625,17 +648,6 @@ var GridColumn = function () {
         key: 'isEmpty',
         value: function isEmpty(column) {
             return column.classList.contains('empty');
-        }
-    }, {
-        key: 'setAllWidth',
-        value: function setAllWidth(target) {
-            var row = target.closest('.grid__row');
-            var allWidth = 0;
-            [].forEach.call(row.querySelectorAll('.grid__column'), function (item) {
-                allWidth = allWidth + parseInt(item.getAttribute('data-width'));
-            });
-
-            row.setAttribute('data-allWidth', allWidth);
         }
     }, {
         key: 'getAllWidth',
@@ -684,23 +696,31 @@ var GridColumn = function () {
         key: 'init',
         value: function init() {}
     }, {
+        key: 'getGrid',
+        value: function getGrid() {
+            return this.row.grid;
+        }
+    }, {
         key: 'add',
-        value: function add(container) {
+        value: function add(row) {
             var width = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+            var id = arguments[2];
 
+            row = row.querySelector('.grid__row--container');
             if (width === null) {
                 width = this.maxWidth;
             }
-            var block = this.getTemplate(width);
+            var block = this.getTemplate(id, width);
             block = GridHelper.parseHTML(block);
             block = block[0];
-            container.appendChild(block);
-            this.setAllWidth(block);
+            row.appendChild(block);
+            this.init();
+            this.row.setAllWidth();
         }
     }, {
         key: 'getTemplate',
-        value: function getTemplate() {
-            var column_width = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 4;
+        value: function getTemplate(id) {
+            var column_width = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 4;
 
             var _self = this;
             var template = ' <div class="grid__column empty" data-width="' + column_width + '">\n        <div class="grid__column--control">\n            <div class="grid__column--move">\n                <i class="fa fa-arrows"></i>\n            </div>\n             <div class="grid__column--action" data-action="changeWidthToLeft">\n                <i class="fa fa-angle-left"></i>\n            </div> \n            <div class="grid__column--action" data-action="changeWidthToRight">\n                <i class="fa fa-angle-right"></i>\n            </div>\n        </div>\n        <div class="grid__column--container">\n           \n            <div class="empty"> \n                <div class="items__list">\n                    ' + _self.getColumnItems() + '                   \n                </div>\n                <div class="select__item">\n\n                </div>\n\n            </div>\n        </div>\n    </div>';
@@ -709,7 +729,7 @@ var GridColumn = function () {
     }, {
         key: 'getColumnItems',
         value: function getColumnItems() {
-            var items = this.grid.items;
+            var items = this.getGrid().items;
             var template = '';
             for (var item in items) {
                 if (items.hasOwnProperty(item)) {
@@ -719,30 +739,6 @@ var GridColumn = function () {
             }
             return template;
         }
-    }], [{
-        key: 'initButtons',
-        value: function initButtons(grid) {
-            var _self = new GridColumn(grid);
-
-            document.addEventListener('click', function (event) {
-                var target = event.target;
-                if (target.matches('.grid__column--add_item')) {
-                    var column = target.closest('.grid__column');
-                    _self.addIconToRow(target);
-                    _self.addItem(column, target.getAttribute('data-type'));
-                }
-                if (target.matches('.grid__item--control_item')) {
-                    target.parentNode.querySelector('.grid__item--control_item').classList.remove('active');
-                    target.classList.add('active');
-                }
-                if (target.matches('.grid__column--action')) {
-                    var action = target.getAttribute('data-action');
-                    if (_self[action] instanceof Function) {
-                        _self[action](target);
-                    }
-                }
-            });
-        }
     }]);
 
     return GridColumn;
@@ -750,6 +746,8 @@ var GridColumn = function () {
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -759,23 +757,36 @@ var GridRow = function () {
 
         _classCallCheck(this, GridRow);
 
-        this.columns = [];
+        this.columns = new Map();
+        this.container = null;
         this.grid = grid;
+        this.id = null;
     }
 
-    /**
-     * Если row не null, то добавляем строку после этого row
-     * @param container
-     * @param row
-     */
-
-
     _createClass(GridRow, [{
+        key: 'getNewElementId',
+        value: function getNewElementId() {
+
+            var keys = [].concat(_toConsumableArray(this.columns.keys()));
+            if (keys.length > 0) {
+                return Math.max.apply(Math, _toConsumableArray(keys)) + 1;
+            } else {
+                return 1;
+            }
+        }
+        /**
+         * Если row не null, то добавляем строку после этого row
+         * @param container
+         * @param row
+         */
+
+    }, {
         key: 'add',
         value: function add(container) {
             var row = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+            var id = arguments[2];
 
-            var block = this.getTemplate();
+            var block = this.getTemplate(id);
             block = GridHelper.parseHTML(block);
             block = block[0];
             if (row !== null) {
@@ -783,6 +794,8 @@ var GridRow = function () {
             } else {
                 container.appendChild(block);
             }
+            this.container = block;
+            this.id = id;
             this.init();
             this.addColumn(block);
         }
@@ -794,8 +807,15 @@ var GridRow = function () {
     }, {
         key: 'addColumn',
         value: function addColumn(row) {
-            var column = new GridColumn(this.grid);
-            column.add(row.querySelector('.grid__row--container'));
+            var id = this.getNewElementId();
+            var column = new GridColumn(this);
+            column.add(this.container, null, id);
+            this.addColumnToRow(id, column);
+        }
+    }, {
+        key: 'addColumnToRow',
+        value: function addColumnToRow(id, column) {
+            this.columns.set(id, column);
         }
     }, {
         key: 'collectColumnData',
@@ -809,6 +829,18 @@ var GridRow = function () {
             return {
                 'columns': columns
             };
+        }
+    }, {
+        key: 'initButtons',
+        value: function initButtons() {
+            var _self = this;
+
+            document.addEventListener('click', function (event) {
+                var target = event.target;
+                if (target.matches('.grid__row--collapse')) {
+                    _self.collapse(target.closest('.grid__row').querySelector('.grid__row--container'));
+                }
+            });
         }
     }, {
         key: 'collapse',
@@ -836,6 +868,7 @@ var GridRow = function () {
     }, {
         key: 'init',
         value: function init() {
+            this.initButtons();
             this.initColumnSorting();
         }
     }, {
@@ -864,24 +897,22 @@ var GridRow = function () {
         key: 'removeColumn',
         value: function removeColumn(index) {}
     }, {
-        key: 'getTemplate',
-        value: function getTemplate() {
-            var columns = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 4;
-
-            var template = '<div class="grid__row col_' + columns + '">\n        <div class="white_background">\n            <div class="grid__row--control">\n                <div class="grid__row--move">\n                    <i class="fa fa-arrows"></i>\n                    <span class="grid__row--move_title"></span>\n                </div>\n                <div class="grid__row--remove"><i class="fa fa-trash"></i> \u0423\u0434\u0430\u043B\u0438\u0442\u044C \u0440\u044F\u0434</div>\n                <div class="grid__row--collapse"><i class="fa fa-caret-up"></i></div>\n            </div>\n            <div class="grid__row--container">\n            </div>\n        </div>\n        <div class="grid__row--add">\n            <div class="btn add-inblock" data-type="row"><i class="fa fa-plus"></i> \u0414\u043E\u0431\u0430\u0432\u0438\u0442\u044C \u0440\u044F\u0434</div>\n        </div>\n    </div>';
-            return template.trim();
-        }
-    }], [{
-        key: 'initButtons',
-        value: function initButtons(grid) {
-            var _self = new GridRow(grid);
-
-            document.addEventListener('click', function (event) {
-                var target = event.target;
-                if (target.matches('.grid__row--collapse')) {
-                    _self.collapse(target.closest('.grid__row').querySelector('.grid__row--container'));
-                }
+        key: 'setAllWidth',
+        value: function setAllWidth() {
+            var allWidth = 0;
+            [].forEach.call(this.container.querySelectorAll('.grid__column'), function (item) {
+                allWidth = allWidth + parseInt(item.getAttribute('data-width'));
             });
+
+            this.container.setAttribute('data-allWidth', allWidth);
+        }
+    }, {
+        key: 'getTemplate',
+        value: function getTemplate(id) {
+            var columns = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 4;
+
+            var template = '<div class="grid__row col_' + columns + '" data-id="' + id + '">\n        <div class="white_background">\n            <div class="grid__row--control">\n                <div class="grid__row--move">\n                    <i class="fa fa-arrows"></i>\n                    <span class="grid__row--move_title"></span>\n                </div>\n                <div class="grid__row--remove"><i class="fa fa-trash"></i> \u0423\u0434\u0430\u043B\u0438\u0442\u044C \u0440\u044F\u0434</div>\n                <div class="grid__row--collapse"><i class="fa fa-caret-up"></i></div>\n            </div>\n            <div class="grid__row--container">\n            </div>\n        </div>\n        <div class="grid__row--add">\n            <div class="btn add-inblock" data-type="row"><i class="fa fa-plus"></i> \u0414\u043E\u0431\u0430\u0432\u0438\u0442\u044C \u0440\u044F\u0434</div>\n        </div>\n    </div>';
+            return template.trim();
         }
     }]);
 
@@ -891,6 +922,8 @@ var GridRow = function () {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Grid = function () {
@@ -899,7 +932,7 @@ var Grid = function () {
 
         _classCallCheck(this, Grid);
 
-        this.rows = [];
+        this.rows = new Map();
         this.container = container;
         this.raw = raw;
         this.items = {
@@ -949,10 +982,10 @@ var Grid = function () {
     }, {
         key: 'init',
         value: function init() {
-            Grid.initButtons(this.container);
-            GridRow.initButtons(this);
-            GridColumn.initButtons(this);
-            BaseElement.initFromHtml();
+            this.initButtons();
+            //GridRow.initButtons(this);
+            //GridColumn.initButtons(this);
+            // BaseElement.initFromHtml();
             //ImageElement.initFromHtml();
             //GalleryElement.initFromHtml();
             this.initSortable();
@@ -985,6 +1018,23 @@ var Grid = function () {
             };
         }
     }, {
+        key: 'initButtons',
+        value: function initButtons() {
+            var _self = this;
+            document.addEventListener('click', function (event) {
+                var target = event.target;
+                if (target.matches('.add-block')) {
+                    _self.addRowBlock();
+                }
+                if (target.matches('.add-inblock')) {
+                    _self.addRowBlockAfter(target.closest('.grid__row'));
+                }
+                if (target.matches('.grid__row--remove')) {
+                    _self.removeRow(target.closest('.grid__row'));
+                }
+            });
+        }
+    }, {
         key: 'initSortable',
         value: function initSortable() {
             var container = document.querySelector("#grid__container");
@@ -1000,7 +1050,9 @@ var Grid = function () {
         key: 'addRowBlock',
         value: function addRowBlock() {
             var row = new GridRow(this);
-            row.add(this.container);
+            var id = this.getNewElementId();
+            row.add(this.container, null, id);
+            this.addRowToGrid(id, row);
         }
     }, {
         key: 'addRowBlockAfter',
@@ -1009,27 +1061,58 @@ var Grid = function () {
             row.add(this.container, item);
         }
     }, {
+        key: 'addRowToGrid',
+        value: function addRowToGrid(id, row) {
+            this.rows.set(id, row);
+        }
+    }, {
         key: 'removeRow',
         value: function removeRow(row) {
             row.remove();
         }
-    }], [{
-        key: 'initButtons',
-        value: function initButtons(container) {
-            var _self = new Grid(container);
+    }, {
+        key: 'getNewElementId',
+        value: function getNewElementId() {
+            var keys = [].concat(_toConsumableArray(this.rows.keys()));
+            if (keys.length > 0) {
+                return Math.max.apply(Math, _toConsumableArray(keys)) + 1;
+            } else {
+                return 1;
+            }
+        }
+    }, {
+        key: 'sort',
+        value: function sort(arr) {
+            var pattern = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
 
-            document.addEventListener('click', function (event) {
-                var target = event.target;
-                if (target.matches('.add-block')) {
-                    _self.addRowBlock();
-                }
-                if (target.matches('.add-inblock')) {
-                    _self.addRowBlockAfter(target.closest('.grid__row'));
-                }
-                if (target.matches('.grid__row--remove')) {
-                    _self.removeRow(target.closest('.grid__row'));
-                }
+            return new Map(arr.sort(pattern));
+            /*
+                    let map = {3:0,2:3,1:2};
+            clone.rows = clone.sort([...this.rows.entries()],function(x, y){ return map[x[0]] - map[y[0]]; });
+             */
+        }
+    }, {
+        key: 'getCleanClone',
+        value: function getCleanClone() {
+            var clone = Object.assign(Object.create(this), this);
+            clone.rows.forEach(function (row) {
+                row.columns.forEach(function (column) {
+                    delete column.row;
+                });
+
+                delete row.grid;
             });
+            clone.rows.forEach(function (row) {
+                row.columns = [].concat(_toConsumableArray(row.columns.values()));
+            });
+            clone.rows = [].concat(_toConsumableArray(clone.rows.values()));
+            clone.container = clone.container.id;
+            return clone;
+        }
+    }, {
+        key: 'stringify',
+        value: function stringify() {
+            return JSON.stringify(this.getCleanClone());
         }
     }]);
 
@@ -1046,7 +1129,7 @@ var Longread = function () {
         _classCallCheck(this, Longread);
 
         this.data = {};
-        this.grid = new Grid(document.getElementById('grid__container'));
+        this.grid = null;
     }
 
     _createClass(Longread, [{
@@ -1055,6 +1138,7 @@ var Longread = function () {
     }, {
         key: 'init',
         value: function init() {
+            this.grid = new Grid(document.getElementById('grid__container'));
             this.grid.init();
             this.initButtons();
         }

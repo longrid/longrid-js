@@ -1,7 +1,7 @@
 class GridColumn {
-    constructor(grid = null,maxWidth = 4,allWidth = 4) {
-        this.items = [];
-        this.grid = grid;
+    constructor(row,maxWidth = 4,allWidth = 4) {
+        this.items = {};
+        this.row = row;
         this.init();
         this.maxWidth = maxWidth;
     }
@@ -10,10 +10,10 @@ class GridColumn {
         return 'columnBlock';
     }
     canAdd(item){
-        return ( this.getAllWidth(item) + item.getAttribute('data-width')) < this.maxWidth;
+        return ( this.getAllWidth(item) + item.getAttribute('data-width')) <= this.maxWidth;
     }
-    static initButtons(grid) {
-        let _self = new GridColumn(grid);
+     initButtons() {
+        let _self = this;
 
         document.addEventListener('click', function (event) {
             let target = event.target;
@@ -51,7 +51,7 @@ class GridColumn {
                 column.setAttribute('data-width',nextWidth.toString())
             }
         }
-        this.setAllWidth(target);
+        this.row.setAllWidth();
     }
     changeWidthToRight(target){
         this.changeWidth(target);
@@ -63,15 +63,7 @@ class GridColumn {
     isEmpty(column){
         return column.classList.contains('empty');
     }
-    setAllWidth(target){
-       let row =  target.closest('.grid__row');
-       let allWidth  = 0;
-       [].forEach.call(row.querySelectorAll('.grid__column'),function(item){
-           allWidth = allWidth +  parseInt(item.getAttribute('data-width'))
-       });
 
-       row.setAttribute('data-allWidth',allWidth);
-    }
     getAllWidth(target = null){
         if(target === null){
             return this.maxWidth;
@@ -111,20 +103,24 @@ class GridColumn {
     init() {
 
     }
-
-    add(container,width = null) {
+    getGrid(){
+        return this.row.grid;
+    }
+    add(row,width = null,id) {
+        row = row.querySelector('.grid__row--container');
         if(width === null){
             width = this.maxWidth;
         }
-        let block = this.getTemplate(width);
+        let block = this.getTemplate(id,width);
         block = GridHelper.parseHTML(block);
         block = block[0];
-        container.appendChild(block);
-        this.setAllWidth(block);
+        row.appendChild(block);
+        this.init();
+        this.row.setAllWidth();
     }
 
 
-    getTemplate(column_width = 4) {
+    getTemplate(id,column_width = 4) {
         let _self = this;
         let template = ` <div class="grid__column empty" data-width="${column_width}">
         <div class="grid__column--control">
@@ -155,7 +151,7 @@ class GridColumn {
     }
 
     getColumnItems() {
-        let items = this.grid.items;
+        let items = this.getGrid().items;
         let template = ``;
         for (let item in items) {
             if (items.hasOwnProperty(item)) {
