@@ -1,9 +1,11 @@
 class GridRow{
     constructor(grid = null) {
         this.columns = new Map();
-        this.container = null;
+        this.instance = null; // DOMElement
         this.grid = grid;
         this.id = null;
+        this.maxWidth = 4; //4 items or 2 items with size 2 and etc.
+        this.currentWidth = 0;
     }
     getNewElementId() {
 
@@ -19,6 +21,7 @@ class GridRow{
      * Если row не null, то добавляем строку после этого row
      * @param container
      * @param row
+     * @param id
      */
     add(container,row = null,id){
         let block = this.getTemplate(id);
@@ -29,7 +32,7 @@ class GridRow{
         } else{
             container.appendChild(block);
         }
-        this.container = block;
+        this.instance = block;
         this.id = id;
         this.init();
         this.addColumn(block);
@@ -41,7 +44,7 @@ class GridRow{
     addColumn(row){
         let id = this.getNewElementId();
         let column = new GridColumn(this);
-        column.add(this.container,null,id);
+        column.add(this.instance,null,id);
         this.addColumnToRow(id, column);
 
     }
@@ -62,16 +65,17 @@ class GridRow{
     }
     initButtons(){
         let _self = this;
-
-        document.addEventListener('click', function(event){
+        this.instance.addEventListener('click', function(event){
             let target = event.target;
-            if(target.matches('.grid__row--collapse')){
-                _self.collapse(target.closest('.grid__row').querySelector('.grid__row--container'));
+            if(target.matches('.grid__row--remove')){
+                _self.removeRow();
             }
-
-
         });
+    }
 
+    removeRow(){
+       this.instance.remove();
+       this.grid.rows.delete(this.id);
     }
 
     collapse(row){
@@ -127,11 +131,11 @@ class GridRow{
     }
     setAllWidth(){
         let allWidth  = 0;
-        [].forEach.call(this.container.querySelectorAll('.grid__column'),function(item){
+        [].forEach.call(this.instance.querySelectorAll('.grid__column'),function(item){
             allWidth = allWidth +  parseInt(item.getAttribute('data-width'))
         });
 
-        this.container.setAttribute('data-allWidth',allWidth);
+        this.instance.setAttribute('data-allWidth',allWidth);
     }
 
     getTemplate(id,columns = 4){

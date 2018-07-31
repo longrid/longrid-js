@@ -2,8 +2,8 @@ class GridColumn {
     constructor(row,maxWidth = 4,allWidth = 4) {
         this.items = {};
         this.row = row;
+        this.instance = null;
         this.init();
-        this.maxWidth = maxWidth;
     }
 
     getTemplateId() {
@@ -15,7 +15,7 @@ class GridColumn {
      initButtons() {
         let _self = this;
 
-        document.addEventListener('click', function (event) {
+        this.instance.addEventListener('click', function (event) {
             let target = event.target;
             if (target.matches('.grid__column--add_item')) {
                 let column = target.closest('.grid__column');
@@ -35,9 +35,9 @@ class GridColumn {
         });
     }
     changeWidth(target,to_right = true){
-        let column = target.closest('.grid__column');
+
+        let column = this.instance;
         let currentWidth =  parseInt(column.getAttribute('data-width'));
-        let allWidth = this.getAllWidth(target);
 
         if(to_right){
             let nextWidth = currentWidth +1;
@@ -64,13 +64,7 @@ class GridColumn {
         return column.classList.contains('empty');
     }
 
-    getAllWidth(target = null){
-        if(target === null){
-            return this.maxWidth;
-        } else{
-           return parseInt(target.closest('.grid__row').getAttribute('data-allWidth'));
-        }
-    }
+
     addIconToRow(item) {
         let icon = item.innerHTML;
         let html = GridHelper.parseHTML('<div class="grid__row--icon">' + icon + '</div>')[0];

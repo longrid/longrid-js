@@ -63,7 +63,7 @@ class Grid {
 
     initButtons() {
         let _self  = this;
-        document.addEventListener('click', function (event) {
+        document.querySelector('.grid__maker').addEventListener('click', function (event) {
             let target = event.target;
             if (target.matches('.add-block')) {
                 _self.addRowBlock();
@@ -71,14 +71,11 @@ class Grid {
             if (target.matches('.add-inblock')) {
                 _self.addRowBlockAfter(target.closest('.grid__row'));
             }
-            if (target.matches('.grid__row--remove')) {
-                _self.removeRow(target.closest('.grid__row'));
-            }
         });
 
     }
 
-    initSortable() {
+    initSortable(){
         let container = document.querySelector("#grid__container");
         let sort = Sortable.create(container, {
             animation: 250, // ms, animation speed moving items when sorting, `0` — without animation
@@ -98,16 +95,15 @@ class Grid {
 
     addRowBlockAfter(item) {
         let row = new GridRow(this);
-        row.add(this.container, item);
+        let id = this.getNewElementId();
+        row.add(this.container, item, id);
+        this.addRowToGrid(id, row);
     }
 
     addRowToGrid(id, row) {
         this.rows.set(id,row);
     }
 
-    removeRow(row) {
-        row.remove();
-    }
 
     getNewElementId() {
         let keys = [...this.rows.keys()];

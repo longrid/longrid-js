@@ -573,8 +573,8 @@ var GridColumn = function () {
 
         this.items = {};
         this.row = row;
+        this.instance = null;
         this.init();
-        this.maxWidth = maxWidth;
     }
 
     _createClass(GridColumn, [{
@@ -592,7 +592,7 @@ var GridColumn = function () {
         value: function initButtons() {
             var _self = this;
 
-            document.addEventListener('click', function (event) {
+            this.instance.addEventListener('click', function (event) {
                 var target = event.target;
                 if (target.matches('.grid__column--add_item')) {
                     var column = target.closest('.grid__column');
@@ -616,9 +616,9 @@ var GridColumn = function () {
         value: function changeWidth(target) {
             var to_right = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
-            var column = target.closest('.grid__column');
+
+            var column = this.instance;
             var currentWidth = parseInt(column.getAttribute('data-width'));
-            var allWidth = this.getAllWidth(target);
 
             if (to_right) {
                 var nextWidth = currentWidth + 1;
@@ -648,17 +648,6 @@ var GridColumn = function () {
         key: 'isEmpty',
         value: function isEmpty(column) {
             return column.classList.contains('empty');
-        }
-    }, {
-        key: 'getAllWidth',
-        value: function getAllWidth() {
-            var target = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-
-            if (target === null) {
-                return this.maxWidth;
-            } else {
-                return parseInt(target.closest('.grid__row').getAttribute('data-allWidth'));
-            }
         }
     }, {
         key: 'addIconToRow',
@@ -758,9 +747,11 @@ var GridRow = function () {
         _classCallCheck(this, GridRow);
 
         this.columns = new Map();
-        this.container = null;
+        this.instance = null; // DOMElement
         this.grid = grid;
         this.id = null;
+        this.maxWidth = 4; //4 items or 2 items with size 2 and etc.
+        this.currentWidth = 0;
     }
 
     _createClass(GridRow, [{
@@ -778,6 +769,7 @@ var GridRow = function () {
          * Если row не null, то добавляем строку после этого row
          * @param container
          * @param row
+         * @param id
          */
 
     }, {
@@ -794,7 +786,7 @@ var GridRow = function () {
             } else {
                 container.appendChild(block);
             }
-            this.container = block;
+            this.instance = block;
             this.id = id;
             this.init();
             this.addColumn(block);
@@ -809,7 +801,7 @@ var GridRow = function () {
         value: function addColumn(row) {
             var id = this.getNewElementId();
             var column = new GridColumn(this);
-            column.add(this.container, null, id);
+            column.add(this.instance, null, id);
             this.addColumnToRow(id, column);
         }
     }, {
@@ -834,13 +826,18 @@ var GridRow = function () {
         key: 'initButtons',
         value: function initButtons() {
             var _self = this;
-
-            document.addEventListener('click', function (event) {
+            this.instance.addEventListener('click', function (event) {
                 var target = event.target;
-                if (target.matches('.grid__row--collapse')) {
-                    _self.collapse(target.closest('.grid__row').querySelector('.grid__row--container'));
+                if (target.matches('.grid__row--remove')) {
+                    _self.removeRow();
                 }
             });
+        }
+    }, {
+        key: 'removeRow',
+        value: function removeRow() {
+            this.instance.remove();
+            this.grid.rows.delete(this.id);
         }
     }, {
         key: 'collapse',
@@ -900,11 +897,11 @@ var GridRow = function () {
         key: 'setAllWidth',
         value: function setAllWidth() {
             var allWidth = 0;
-            [].forEach.call(this.container.querySelectorAll('.grid__column'), function (item) {
+            [].forEach.call(this.instance.querySelectorAll('.grid__column'), function (item) {
                 allWidth = allWidth + parseInt(item.getAttribute('data-width'));
             });
 
-            this.container.setAttribute('data-allWidth', allWidth);
+            this.instance.setAttribute('data-allWidth', allWidth);
         }
     }, {
         key: 'getTemplate',
@@ -1021,16 +1018,13 @@ var Grid = function () {
         key: 'initButtons',
         value: function initButtons() {
             var _self = this;
-            document.addEventListener('click', function (event) {
+            document.querySelector('.grid__maker').addEventListener('click', function (event) {
                 var target = event.target;
                 if (target.matches('.add-block')) {
                     _self.addRowBlock();
                 }
                 if (target.matches('.add-inblock')) {
                     _self.addRowBlockAfter(target.closest('.grid__row'));
-                }
-                if (target.matches('.grid__row--remove')) {
-                    _self.removeRow(target.closest('.grid__row'));
                 }
             });
         }
@@ -1058,17 +1052,14 @@ var Grid = function () {
         key: 'addRowBlockAfter',
         value: function addRowBlockAfter(item) {
             var row = new GridRow(this);
-            row.add(this.container, item);
+            var id = this.getNewElementId();
+            row.add(this.container, item, id);
+            this.addRowToGrid(id, row);
         }
     }, {
         key: 'addRowToGrid',
         value: function addRowToGrid(id, row) {
             this.rows.set(id, row);
-        }
-    }, {
-        key: 'removeRow',
-        value: function removeRow(row) {
-            row.remove();
         }
     }, {
         key: 'getNewElementId',
