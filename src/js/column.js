@@ -1,26 +1,28 @@
 class GridColumn {
-    constructor(row,maxWidth = 4,allWidth = 4) {
+    constructor(row,width = 1) {
         this.items = {};
         this.row = row;
         this.instance = null;
-        this.init();
+        this.width = width;
+        this.id = null;
     }
 
     getTemplateId() {
         return 'columnBlock';
     }
-    canAdd(item){
-        return ( this.getAllWidth(item) + item.getAttribute('data-width')) <= this.maxWidth;
+
+    getWidth(){
+        return this.width;
     }
+
      initButtons() {
         let _self = this;
 
         this.instance.addEventListener('click', function (event) {
             let target = event.target;
             if (target.matches('.grid__column--add_item')) {
-                let column = target.closest('.grid__column');
                 _self.addIconToRow(target);
-                _self.addItem(column, target.getAttribute('data-type'));
+                _self.addItem(target.getAttribute('data-type'));
             }
             if (target.matches('.grid__item--control_item')) {
                 target.parentNode.querySelector('.grid__item--control_item').classList.remove('active');
@@ -29,39 +31,54 @@ class GridColumn {
             if (target.matches('.grid__column--action')) {
                 let action = target.getAttribute('data-action');
                 if (_self[action] instanceof Function) {
-                    _self[action](target);
+                    if(['increaseWidth','decreaseWidth'].includes(action)){
+                        if(!_self.isEmpty()){
+                            _self[action](target);
+                        }
+                    } else{
+                        _self[action](target);
+                    }
                 }
             }
         });
     }
-    changeWidth(target,to_right = true){
 
-        let column = this.instance;
-        let currentWidth =  parseInt(column.getAttribute('data-width'));
+    changeDataWidth(){
+        this.instance.setAttribute('data-width',this.width);
+    }
+    increaseWidth(){
 
-        if(to_right){
-            let nextWidth = currentWidth +1;
-            let nextAllWidth = allWidth + 1;
-            if(nextAllWidth <= this.maxWidth){
-                column.setAttribute('data-width',nextWidth.toString());
+        if(this.width + 1 > this.row.maxWidth){
+            return false;
+        }
+        if(this.row.canChangeColumnWidth()){
+            this.width = this.width + 1;
+            this.row.setWidth(1,this.isEmpty());
+            if(!this.isEmpty()){
+                this.row.removeOrChangeEmptyColumn()
             }
-        } else{
-            let nextWidth = currentWidth - 1;
-            if(nextWidth > 0){
-                column.setAttribute('data-width',nextWidth.toString())
+
+
+        }
+        this.changeDataWidth();
+    }
+    decreaseWidth(){
+
+        if(this.width - 1 <= 0){
+            return false;
+        }
+        if(this.row.canChangeColumnWidth(true)){
+            this.width = this.width - 1;
+            this.row.setWidth(-1,this.isEmpty());
+            if(!this.isEmpty()){
+                this.row.addOrChangeEmptyColumn()
             }
         }
-        this.row.setAllWidth();
-    }
-    changeWidthToRight(target){
-        this.changeWidth(target);
-    }
-    changeWidthToLeft(target){
-        this.changeWidth(target,false);
+        this.changeDataWidth();
     }
 
-    isEmpty(column){
-        return column.classList.contains('empty');
+    isEmpty(){
+        return this.instance.classList.contains('empty');
     }
 
 
@@ -72,17 +89,21 @@ class GridColumn {
         controls.insertBefore(html, controls.firstChild);
     }
 
-    addItem(column, type) {
-        let item = new this.grid.items[type]();
+    addItem( type) {
+        let className = this.getGrid().items[type];
+        let item = new className();
         let html_block = item.getHtmlBlock();
-        let container = column.querySelector('.grid__column--container');
+        let container = this.instance.querySelector('.grid__column--container');
         container.innerHTML = '';
         container.appendChild(html_block);
-        item.init(container);
-
-        column.classList.remove('empty');
+        item.init(this.instance);
+        this.changeColumnStatus();
     }
-
+    changeColumnStatus(){
+        this.instance.classList.remove('empty');
+        this.row.emptyWidth -= this.getWidth();
+        this.row.itemsWidth += this.getWidth();
+    }
     collectItemData(column) {
         let items = [];
         let _self = this;
@@ -95,38 +116,39 @@ class GridColumn {
     }
 
     init() {
-
+        this.initButtons();
     }
     getGrid(){
         return this.row.grid;
     }
-    add(row,width = null,id) {
-        row = row.querySelector('.grid__row--container');
-        if(width === null){
-            width = this.maxWidth;
-        }
-        let block = this.getTemplate(id,width);
+    add(id) {
+        let row = this.row.instance.querySelector('.grid__row--container');
+        let block = this.getTemplate(id);
         block = GridHelper.parseHTML(block);
-        block = block[0];
-        row.appendChild(block);
+        this.instance = block[0];
+        row.appendChild(this.instance);
+        this.id = id;
         this.init();
-        this.row.setAllWidth();
+
     }
 
 
-    getTemplate(id,column_width = 4) {
+    getTemplate(id) {
         let _self = this;
-        let template = ` <div class="grid__column empty" data-width="${column_width}">
-        <div class="grid__column--control">
+        let template = ` <div class="grid__column empty" data-width="${_self.getWidth()}" data-id="${id}">
+        <div class="grid__column--control"> 
             <div class="grid__column--move">
                 <i class="fa fa-arrows"></i>
             </div>
-             <div class="grid__column--action" data-action="changeWidthToLeft">
+             <div class="grid__column--action" data-action="decreaseWidth">
                 <i class="fa fa-angle-left"></i>
             </div> 
-            <div class="grid__column--action" data-action="changeWidthToRight">
+            <div class="grid__column--action" data-action="increaseWidth">
                 <i class="fa fa-angle-right"></i>
             </div>
+             <div class="grid__column--action" data-action="removeColumn">
+                <i class="fa fa-trash"></i>
+            </div>   
         </div>
         <div class="grid__column--container">
            
@@ -156,5 +178,20 @@ class GridColumn {
             }
         }
         return template;
+    }
+
+    removeColumn(){
+        if(!this.isEmpty()){
+            let removeConfirm = confirm('Are you sure to delete?');
+            if(!removeConfirm){
+                return false;
+            }
+            this.row.setWidth(-this.getWidth());
+            let emptyColumn = this.row.addColumn(this.getWidth());
+            this.instance.parentNode.replaceChild(emptyColumn.instance, this.instance);
+        } else{
+            this.instance.remove();
+        }
+        this.row.columns.delete(this.id);
     }
 }

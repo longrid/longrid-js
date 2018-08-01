@@ -132,7 +132,7 @@
   }
   &__column {
     border:1px solid #ddd;
-    transition: all .15s ease-in-out;
+   // transition: all .15s ease-in-out;
     &--move{
       @extend .grid__row--move;
       border-radius: 0;
@@ -153,7 +153,10 @@
         margin-right: 0;
       }
     }
-    .empty {
+    &.empty {
+      .grid__column--action{
+        display: none;
+      }
       .items__list {
         padding: 16px 0;
         display: flex;

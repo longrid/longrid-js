@@ -1,8 +1,15 @@
+/**
+ * columns can be 2 to 12
+ */
 class Grid {
     constructor(container, raw = '') {
         this.rows = new Map();
         this.container = container;
         this.raw = raw;
+        this.options = {
+            columns:4,
+            defaultItem:'text'
+        };
         this.items = {
             'text': TextElement,
         };
@@ -28,26 +35,10 @@ class Grid {
 
     init() {
         this.initButtons();
-        //GridRow.initButtons(this);
-        //GridColumn.initButtons(this);
-       // BaseElement.initFromHtml();
-        //ImageElement.initFromHtml();
-        //GalleryElement.initFromHtml();
         this.initSortable();
-        this.initRowIcons();
+       // this.initRowIcons();
     }
 
-    initRowIcons() {
-        [].forEach.call(document.querySelectorAll('.grid__column'), function (item) {
-            let icons = this.querySelector('.grid__column .icons');
-            let controls = this.querySelector('.grid__column--control');
-            if (icons.length) {
-                let html = GridHelper.parseHTML('<div class="grid__row--icon">' + icons.innerHTML + '</div>');
-                controls.insertBefore(html, controls.firstChild);
-                icons.remove();
-            }
-        });
-    }
 
     collectGridData() {
         let row = new GridRow();
@@ -87,7 +78,7 @@ class Grid {
     }
 
     addRowBlock() {
-        let row = new GridRow(this);
+        let row = new GridRow(this,this.options.columns);
         let id = this.getNewElementId();
         row.add(this.container, null, id);
         this.addRowToGrid(id, row);

@@ -1,5 +1,9 @@
 class TextElement extends BaseElement{
-
+    constructor(column){
+        super();
+        this.column = column;
+        this.instance = null;
+    }
     init() {
         this.initMedium();
     }
