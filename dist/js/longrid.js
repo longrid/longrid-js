@@ -27,6 +27,18 @@ var GridHelper = function () {
         value: function getHtml(id) {
             return document.getElementById(id).innerHTML;
         }
+    }, {
+        key: "uniqueArray",
+        value: function uniqueArray(arrArg) {
+            return Array.from(new Set(arrArg));
+        }
+    }, {
+        key: "getFilterd",
+        value: function getFilterd(arr, arr2) {
+            return arr.filter(function (el) {
+                return !arr2.includes(el);
+            });
+        }
     }]);
 
     return GridHelper;
@@ -980,6 +992,18 @@ var GridRow = function () {
             for (var i = 0; i < column.getWidth(); i++) {
                 this.addOrChangeEmptyColumn();
             }
+            //Отсортировать добавленную колонку так, чтобы она встала на место перемещенного
+            var oldSort = GridHelper.uniqueArray(this._temp_sortOrder);
+            var removedIndex = GridHelper.getFilterd(oldSort, this.sortable.toArray()).join();
+            var newIndex = GridHelper.getFilterd(this.sortable.toArray(), this._temp_sortOrder).join();
+            oldSort = oldSort.map(function (name) {
+                if (name == removedIndex) {
+                    return newIndex;
+                } else {
+                    return name;
+                }
+            });
+            this.sortable.sort(oldSort);
         }
     }, {
         key: 'addColumnFromAnotherRow',
@@ -993,7 +1017,6 @@ var GridRow = function () {
             this.setWidth(column.getWidth(), column.isEmpty());
             this.addColumnToRow(new_id, column);
             this.addAction = false;
-            console.log(column);
         }
     }, {
         key: 'getColumnById',

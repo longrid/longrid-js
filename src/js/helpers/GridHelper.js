@@ -8,6 +8,12 @@ class GridHelper{
     static getHtml(id){
         return document.getElementById(id).innerHTML;
     }
+    static  uniqueArray (arrArg){
+        return Array.from(new Set(arrArg));
+    }
+    static getFilterd(arr,arr2){
+       return arr.filter( ( el ) => !arr2.includes( el ) );
+    }
 
 }
 

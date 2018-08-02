@@ -156,6 +156,7 @@ class GridRow {
         if (newRow.canAddColumn(column.getWidth())) {
             newRow.addColumnFromAnotherRow(column);
             oldRow.removeColumnToAnotherRow(clone);
+
         } else {
             this.reverseSortedColumn(e);
             console.warn('No free space in row');
@@ -177,6 +178,18 @@ class GridRow {
         for (let i = 0; i < column.getWidth(); i++) {
             this.addOrChangeEmptyColumn()
         }
+        //Отсортировать добавленную колонку так, чтобы она встала на место перемещенного
+        let oldSort = GridHelper.uniqueArray(this._temp_sortOrder);
+        let removedIndex = GridHelper.getFilterd(oldSort,this.sortable.toArray()).join();
+        let newIndex = GridHelper.getFilterd(this.sortable.toArray(),this._temp_sortOrder).join();
+        oldSort = oldSort.map(function(name) {
+            if(name == removedIndex){
+                return newIndex;
+            } else{
+                return name; 
+            }
+        });
+       this.sortable.sort(oldSort);
     }
 
     addColumnFromAnotherRow(column) {
@@ -189,7 +202,6 @@ class GridRow {
         this.setWidth(column.getWidth(), column.isEmpty());
         this.addColumnToRow(new_id, column);
         this.addAction = false;
-        console.log(column);
     }
 
     getColumnById(id) {
