@@ -16,7 +16,10 @@ class Grid {
 
     }
 
-
+    getRowById(id){
+        id = parseInt(id);
+        return this.rows.get(id)
+    }
     addItem(name, instance_class) {
         let instance = new instance_class();
         for (let name of Object.getOwnPropertyNames(Object.getPrototypeOf((new AbstractElement)))) {

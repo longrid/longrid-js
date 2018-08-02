@@ -46,9 +46,12 @@ class GridColumn {
     changeDataWidth(){
         this.instance.setAttribute('data-width',this.width);
     }
+    updateDataId(){
+        this.instance.setAttribute('data-id',this.id);
+    }
     increaseWidth(){
-
         if(this.width + 1 > this.row.maxWidth){
+            throw new Error(`can't increase`);
             return false;
         }
         if(this.row.canChangeColumnWidth()){
@@ -57,22 +60,28 @@ class GridColumn {
             if(!this.isEmpty()){
                 this.row.removeOrChangeEmptyColumn()
             }
-
-
+        } else{
+            throw new Error(`can't change column width to +`);
         }
         this.changeDataWidth();
     }
-    decreaseWidth(){
 
+
+    decreaseWidth(){
         if(this.width - 1 <= 0){
+            throw new Error(`can't decrease`);
             return false;
+        } else{
+
         }
-        if(this.row.canChangeColumnWidth(true)){
+        if(this.row.canChangeColumnWidth(true) || this.row.addAction){
             this.width = this.width - 1;
             this.row.setWidth(-1,this.isEmpty());
             if(!this.isEmpty()){
                 this.row.addOrChangeEmptyColumn()
             }
+        } else{
+            throw new Error(`can't change column width to -`);
         }
         this.changeDataWidth();
     }
@@ -141,10 +150,10 @@ class GridColumn {
                 <i class="fa fa-arrows"></i>
             </div>
              <div class="grid__column--action" data-action="decreaseWidth">
-                <i class="fa fa-angle-left"></i>
+                -
             </div> 
             <div class="grid__column--action" data-action="increaseWidth">
-                <i class="fa fa-angle-right"></i>
+               +
             </div>
              <div class="grid__column--action" data-action="removeColumn">
                 <i class="fa fa-trash"></i>

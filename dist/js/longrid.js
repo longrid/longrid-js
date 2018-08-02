@@ -626,10 +626,15 @@ var GridColumn = function () {
             this.instance.setAttribute('data-width', this.width);
         }
     }, {
+        key: 'updateDataId',
+        value: function updateDataId() {
+            this.instance.setAttribute('data-id', this.id);
+        }
+    }, {
         key: 'increaseWidth',
         value: function increaseWidth() {
-
             if (this.width + 1 > this.row.maxWidth) {
+                throw new Error('can\'t increase');
                 return false;
             }
             if (this.row.canChangeColumnWidth()) {
@@ -638,22 +643,26 @@ var GridColumn = function () {
                 if (!this.isEmpty()) {
                     this.row.removeOrChangeEmptyColumn();
                 }
+            } else {
+                throw new Error('can\'t change column width to +');
             }
             this.changeDataWidth();
         }
     }, {
         key: 'decreaseWidth',
         value: function decreaseWidth() {
-
             if (this.width - 1 <= 0) {
+                throw new Error('can\'t decrease');
                 return false;
-            }
-            if (this.row.canChangeColumnWidth(true)) {
+            } else {}
+            if (this.row.canChangeColumnWidth(true) || this.row.addAction) {
                 this.width = this.width - 1;
                 this.row.setWidth(-1, this.isEmpty());
                 if (!this.isEmpty()) {
                     this.row.addOrChangeEmptyColumn();
                 }
+            } else {
+                throw new Error('can\'t change column width to -');
             }
             this.changeDataWidth();
         }
@@ -726,7 +735,7 @@ var GridColumn = function () {
         key: 'getTemplate',
         value: function getTemplate(id) {
             var _self = this;
-            var template = ' <div class="grid__column empty" data-width="' + _self.getWidth() + '" data-id="' + id + '">\n        <div class="grid__column--control"> \n            <div class="grid__column--move">\n                <i class="fa fa-arrows"></i>\n            </div>\n             <div class="grid__column--action" data-action="decreaseWidth">\n                <i class="fa fa-angle-left"></i>\n            </div> \n            <div class="grid__column--action" data-action="increaseWidth">\n                <i class="fa fa-angle-right"></i>\n            </div>\n             <div class="grid__column--action" data-action="removeColumn">\n                <i class="fa fa-trash"></i>\n            </div>   \n        </div>\n        <div class="grid__column--container">\n           \n            <div class="empty"> \n                <div class="items__list">\n                    ' + _self.getColumnItems() + '                   \n                </div>\n                <div class="select__item">\n\n                </div>\n\n            </div>\n        </div>\n    </div>';
+            var template = ' <div class="grid__column empty" data-width="' + _self.getWidth() + '" data-id="' + id + '">\n        <div class="grid__column--control"> \n            <div class="grid__column--move">\n                <i class="fa fa-arrows"></i>\n            </div>\n             <div class="grid__column--action" data-action="decreaseWidth">\n                -\n            </div> \n            <div class="grid__column--action" data-action="increaseWidth">\n               +\n            </div>\n             <div class="grid__column--action" data-action="removeColumn">\n                <i class="fa fa-trash"></i>\n            </div>   \n        </div>\n        <div class="grid__column--container">\n           \n            <div class="empty"> \n                <div class="items__list">\n                    ' + _self.getColumnItems() + '                   \n                </div>\n                <div class="select__item">\n\n                </div>\n\n            </div>\n        </div>\n    </div>';
             return template.trim();
         }
     }, {
@@ -784,6 +793,8 @@ var GridRow = function () {
         this.maxWidth = maxWidth; //4 items or 2 items with size 2 and etc.
         this.itemsWidth = 0;
         this.emptyWidth = 0;
+        this.addAction = false;
+        this.sortable = null;
     }
 
     _createClass(GridRow, [{
@@ -797,6 +808,7 @@ var GridRow = function () {
                 return 1;
             }
         }
+
         /**
          * Если row не null, то добавляем строку после этого row
          * @param container
@@ -841,8 +853,10 @@ var GridRow = function () {
                 this.addColumnToRow(id, column);
                 this.setWidth(column.getWidth(), column.isEmpty());
                 if (addItem) {
-                    column.addIconToRow(column.instance.querySelector('.grid__column--add_item[data-type="' + this.grid.options.defaultItem + '"]'));
-                    column.addItem(this.grid.options.defaultItem);
+                    if (this.grid.options.hasOwnProperty('defaultItem')) {
+                        column.addIconToRow(column.instance.querySelector('.grid__column--add_item[data-type="' + this.grid.options.defaultItem + '"]'));
+                        column.addItem(this.grid.options.defaultItem);
+                    }
                 }
             } else {
                 throw new Error('No space in row');
@@ -916,28 +930,77 @@ var GridRow = function () {
     }, {
         key: 'initColumnSorting',
         value: function initColumnSorting() {
-            var container = document.querySelector("#grid__container");
-            var sort = Sortable.create(container, {
-                animation: 250, // ms, animation speed moving items when sorting, `0` — without animation
-                scrollSpeed: 10,
-                scrollSensitivity: 70,
+            var _self = this;
+
+            var sortable = Sortable.create(_self.instance.querySelector('.grid__row--container'), {
+                group: 'columns',
+                animation: 150,
+                ghostClass: "ghost",
                 handle: ".grid__column--move", // Restricts sort start click/touch to the specified element
                 draggable: ".grid__column", // Specifies which items inside the element should be sortable
-                onSort: function onSort(evt) {
-
-                    if (evt.action === 'add') {}
+                onStart: function onStart(evt) {
+                    _self._temp_sortOrder = _self.sortable.toArray();
+                },
+                onAdd: function onAdd(evt) {
+                    _self.moveColumnToAnotherRow(evt);
+                    _self._temp_sortOrder = null;
                 }
             });
-            [].forEach.call(container.getElementsByClassName('grid__row--container'), function (el) {
-                Sortable.create(el, {
-                    group: 'columns',
-                    animation: 150
-                });
-            });
+
+            this.sortable = sortable;
         }
     }, {
-        key: 'removeColumn',
-        value: function removeColumn(index) {}
+        key: 'moveColumnToAnotherRow',
+        value: function moveColumnToAnotherRow(e) {
+            var oldRow = this.grid.getRowById(e.from.closest('.grid__row').getAttribute('data-id'));
+            var newRow = this.grid.getRowById(e.target.closest('.grid__row').getAttribute('data-id'));
+            var column = oldRow.getColumnById(e.item.getAttribute('data-id'));
+            var clone = Object.assign(Object.create(Object.getPrototypeOf(column)), column);
+            if (newRow.canAddColumn(column.getWidth())) {
+                newRow.addColumnFromAnotherRow(column);
+                oldRow.removeColumnToAnotherRow(clone);
+            } else {
+                this.reverseSortedColumn(e);
+                console.warn('No free space in row');
+                //throw new Error('No free space in row');
+            }
+        }
+    }, {
+        key: 'reverseSortedColumn',
+        value: function reverseSortedColumn(e) {
+            var oldRow = this.grid.getRowById(e.from.closest('.grid__row').getAttribute('data-id'));
+            e.from.appendChild(e.item);
+            oldRow.sortable.sort(oldRow._temp_sortOrder);
+        }
+    }, {
+        key: 'removeColumnToAnotherRow',
+        value: function removeColumnToAnotherRow(column) {
+            this.columns.delete(column.id);
+            this.setWidth(-column.getWidth(), column.isEmpty());
+            for (var i = 0; i < column.getWidth(); i++) {
+                this.addOrChangeEmptyColumn();
+            }
+        }
+    }, {
+        key: 'addColumnFromAnotherRow',
+        value: function addColumnFromAnotherRow(column) {
+            var new_id = this.getNewElementId();
+            this.addAction = true;
+            column.row = this;
+            column.id = new_id;
+            column.updateDataId();
+            this.removeOrChangeEmptyColumn(column.getWidth());
+            this.setWidth(column.getWidth(), column.isEmpty());
+            this.addColumnToRow(new_id, column);
+            this.addAction = false;
+            console.log(column);
+        }
+    }, {
+        key: 'getColumnById',
+        value: function getColumnById(id) {
+            id = parseInt(id);
+            return this.columns.get(id);
+        }
     }, {
         key: 'getAvailableWidth',
         value: function getAvailableWidth() {
@@ -956,6 +1019,9 @@ var GridRow = function () {
 
             var available = this.getAvailableWidth();
             if (decrease) {
+                if (this.addAction) {
+                    return true;
+                }
                 if (available + 1 < this.maxWidth) {
                     return true;
                 }
@@ -978,28 +1044,39 @@ var GridRow = function () {
     }, {
         key: 'addOrChangeEmptyColumn',
         value: function addOrChangeEmptyColumn() {
-            if (this.getAvailableWidth() > 0) {
-                var emptyItem = this.hasEmptyColumns();
-                if (!emptyItem) {
-                    this.addColumn(1);
-                } else {
-                    emptyItem.increaseWidth();
+            var times = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+
+            for (var i = 0; i < times; i++) {
+                if (this.getAvailableWidth() > 0) {
+                    var emptyItem = this.hasEmptyColumns();
+                    if (!emptyItem) {
+                        this.addColumn(1);
+                    } else {
+                        emptyItem.increaseWidth();
+                    }
                 }
             }
         }
     }, {
         key: 'removeOrChangeEmptyColumn',
         value: function removeOrChangeEmptyColumn() {
+            var times = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
-            var emptyItem = this.hasEmptyColumns();
-            if (emptyItem) {
-                if (this.emptyWidth == 1) {
-                    emptyItem.removeColumn();
-                    this.emptyWidth = 0;
-                } else {
-                    emptyItem.decreaseWidth();
+            for (var i = 0; i < times; i++) {
+                var emptyItem = this.hasEmptyColumns();
+                if (emptyItem) {
+                    if (this.emptyWidth == 1) {
+                        emptyItem.removeColumn();
+                        this.emptyWidth = 0;
+                    } else {
+                        if (emptyItem.getWidth() == 1) {
+                            emptyItem.removeColumn();
+                        } else {
+                            emptyItem.decreaseWidth();
+                        }
+                    }
                 }
-            } else {}
+            }
         }
     }, {
         key: 'hasEmptyColumns',
@@ -1077,6 +1154,12 @@ var Grid = function () {
     }
 
     _createClass(Grid, [{
+        key: 'getRowById',
+        value: function getRowById(id) {
+            id = parseInt(id);
+            return this.rows.get(id);
+        }
+    }, {
         key: 'addItem',
         value: function addItem(name, instance_class) {
             var instance = new instance_class();
