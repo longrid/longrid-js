@@ -52,8 +52,4 @@ class BaseElement extends AbstractElement{
         return {};
     }
 
-    static initFromHtml(){
-        let _self = new BaseElement();
-        _self.initMedium();
-    }
 }
