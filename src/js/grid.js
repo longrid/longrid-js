@@ -12,7 +12,7 @@ class Grid {
             defaultItem: 'text'
         };
         this.items = {
-            'text': TextElement,
+            'text': TextElement
         };
 
     }
