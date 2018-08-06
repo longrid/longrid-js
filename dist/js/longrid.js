@@ -558,6 +558,20 @@ var TextElement = function (_BaseElement) {
             return 'textBlock';
         }
     }, {
+        key: 'getHtmlBlock',
+        value: function getHtmlBlock(id) {
+            var block = this.getTemplate(id);
+            block = GridHelper.parseHTML(block);
+            return block[0];
+        }
+    }, {
+        key: 'getTemplate',
+        value: function getTemplate(id) {
+            var content = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+
+            return '<div class="grid__item" data-type="text" data-id="' + id + '">\n            <div class="grid__item--text">\n                <div class="editable">\n                ' + content + '\n                </div>\n            </div>\n        </div>';
+        }
+    }, {
         key: 'getTitle',
         value: function getTitle() {
             return "Текст";
@@ -618,6 +632,25 @@ var GridColumn = function () {
             this.init();
         }
     }, {
+        key: 'addFromRaw',
+        value: function addFromRaw(column) {
+            var _self = this;
+            var block = this.getTemplate(column.id);
+            block = GridHelper.parseHTML(block);
+            block = block[0];
+            var row = this.row.instance.querySelector('.grid__row--container');
+            row.appendChild(block);
+            this.instance = block;
+            this.id = column.id;
+            this.init();
+            if (column.hasOwnProperty('items')) {
+                column.items.forEach(function (item) {
+                    // let grid_column = new GridColumn(this);
+                    // grid_column.addFromRaw(this,column);
+                });
+            }
+        }
+    }, {
         key: 'addIconToRow',
         value: function addIconToRow(item) {
             var icon = item.innerHTML;
@@ -630,8 +663,9 @@ var GridColumn = function () {
         value: function addItem(type) {
             var className = this.getGrid().items[type];
             var item = new className(this);
-            var block = item.getHtmlBlock();
+
             var id = this.getNewElementId();
+            var block = item.getHtmlBlock(id);
             var container = this.instance.querySelector('.grid__column--container');
             container.innerHTML = '';
             container.appendChild(block);
@@ -890,6 +924,29 @@ var GridRow = function () {
             this.id = id;
             this.init();
             this.addColumn(this.maxWidth, true);
+        }
+    }, {
+        key: 'addFromRaw',
+        value: function addFromRaw(container, row) {
+            var block = this.getTemplate(row.id, this.maxWidth);
+            var _self = this;
+            block = GridHelper.parseHTML(block);
+            block = block[0];
+
+            container.appendChild(block);
+            this.instance = block;
+            this.id = row.id;
+            this.emptyWidth = row.emptyWidth;
+            this.itemsWidth = row.itemsWidth;
+            this.maxWidth = row.maxWidth;
+            this.init();
+            if (row.hasOwnProperty('columns')) {
+                row.columns.forEach(function (column) {
+                    var grid_column = new GridColumn(_self, column.width);
+                    grid_column.addFromRaw(column);
+                    _self.addColumnToRow(column.id, grid_column);
+                });
+            }
         }
     }, {
         key: 'addColumn',
@@ -1330,7 +1387,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  */
 var Grid = function () {
     function Grid(container) {
-        var raw = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+        var raw = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
         _classCallCheck(this, Grid);
 
@@ -1441,9 +1498,39 @@ var Grid = function () {
     }, {
         key: 'init',
         value: function init() {
+            if (this.hasRaw()) {
+                this.initRaw();
+            }
             this.initButtons();
             this.initSortable();
             // this.initRowIcons();
+        }
+    }, {
+        key: 'initRaw',
+        value: function initRaw() {
+            var raw = JSON.parse(this.raw);
+            var _self = this;
+            if (raw.hasOwnProperty('rows')) {
+                raw.rows.forEach(function (row) {
+                    var grid_row = new GridRow(_self, _self.options.columns);
+                    grid_row.addFromRaw(_self.container, row);
+                    _self.addRowToGrid(row.id, grid_row);
+                });
+            }
+        }
+    }, {
+        key: 'hasRaw',
+        value: function hasRaw() {
+            try {
+                var r = JSON.parse(this.raw);
+                if (r.hasOwnProperty('rows')) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch (err) {
+                return false;
+            }
         }
     }, {
         key: 'initButtons',
@@ -1512,7 +1599,7 @@ var Longread = function () {
     }, {
         key: 'init',
         value: function init() {
-            this.grid = new Grid(document.getElementById('grid__container'));
+            this.grid = new Grid(document.getElementById('grid__container'), document.querySelector('textarea').innerHTML);
             this.grid.init();
             this.initButtons();
         }
@@ -1520,7 +1607,6 @@ var Longread = function () {
         key: 'save',
         value: function save() {
             var _self = this;
-            this.data.grid = this.grid.collectGridData();
         }
     }]);
 

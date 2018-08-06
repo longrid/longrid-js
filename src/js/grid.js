@@ -2,7 +2,7 @@
  * columns can be 2 to 12
  */
 class Grid {
-    constructor(container, raw = '') {
+    constructor(container, raw = null) {
         this.rows = new Map();
         this.container = container;
         this.raw = raw;
@@ -80,11 +80,36 @@ class Grid {
     }
 
     init() {
+        if(this.hasRaw()){
+            this.initRaw();
+        }
         this.initButtons();
         this.initSortable();
         // this.initRowIcons();
     }
-
+    initRaw(){
+        let raw = JSON.parse(this.raw);
+        let _self = this;
+        if(raw.hasOwnProperty('rows')){
+            raw.rows.forEach(function(row){
+                let grid_row = new GridRow(_self,_self.options.columns);
+                grid_row.addFromRaw(_self.container, row);
+                _self.addRowToGrid(row.id, grid_row);
+            });
+        }
+    }
+    hasRaw(){
+        try{
+            let r = JSON.parse(this.raw);
+            if(r.hasOwnProperty('rows')){
+                return true;
+            } else{
+                return false
+            }
+        } catch(err){
+            return false
+        }
+    }
     initButtons() {
         let _self = this;
         document.querySelector('.grid__maker').addEventListener('click', function (event) {

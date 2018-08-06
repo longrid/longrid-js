@@ -28,7 +28,23 @@ class GridColumn {
         this.init();
 
     }
-
+    addFromRaw(column){
+        let _self = this;
+        let block = this.getTemplate(column.id);
+        block = GridHelper.parseHTML(block);
+        block = block[0];
+        let row = this.row.instance.querySelector('.grid__row--container');
+        row.appendChild(block);
+        this.instance = block;
+        this.id = column.id;
+        this.init();
+        if(column.hasOwnProperty('items')){
+            column.items.forEach(function(item){
+                // let grid_column = new GridColumn(this);
+               // grid_column.addFromRaw(this,column);
+            })
+        }
+    }
     addIconToRow(item) {
         let icon = item.innerHTML;
         let html = GridHelper.parseHTML('<div class="grid__row--icon">' + icon + '</div>')[0];
@@ -39,8 +55,9 @@ class GridColumn {
     addItem(type) {
         let className = this.getGrid().items[type];
         let item = new className(this);
-        let block = item.getHtmlBlock();
+
         let id = this.getNewElementId();
+        let block = item.getHtmlBlock(id);
         let container = this.instance.querySelector('.grid__column--container');
         container.innerHTML = '';
         container.appendChild(block);

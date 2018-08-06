@@ -7,14 +7,13 @@ class Longread{
 
     }
     init(){
-        this.grid =  new Grid(document.getElementById('grid__container'));
+        this.grid =  new Grid(document.getElementById('grid__container'),document.querySelector('textarea').innerHTML);
         this.grid.init();
         this.initButtons();
     }
 
     save(){
         let _self = this;
-        this.data.grid = this.grid.collectGridData();
 
     }
 }

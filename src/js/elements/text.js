@@ -22,7 +22,20 @@ class TextElement extends BaseElement {
     getTemplateId() {
         return 'textBlock';
     }
-
+    getHtmlBlock(id){
+        let block = this.getTemplate(id);
+        block = GridHelper.parseHTML(block);
+        return block[0];
+    }
+    getTemplate(id,content = ''){
+        return `<div class="grid__item" data-type="text" data-id="${id}">
+            <div class="grid__item--text">
+                <div class="editable">
+                ${content}
+                </div>
+            </div>
+        </div>`;
+    }
     getTitle() {
         return "Текст";
     }

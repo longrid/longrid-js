@@ -32,6 +32,27 @@ class GridRow {
         this.init();
         this.addColumn(this.maxWidth, true);
     }
+    addFromRaw(container,row){
+        let block = this.getTemplate(row.id, this.maxWidth);
+        let _self = this;
+        block = GridHelper.parseHTML(block);
+        block = block[0];
+
+        container.appendChild(block);
+        this.instance = block;
+        this.id = row.id;
+        this.emptyWidth = row.emptyWidth;
+        this.itemsWidth = row.itemsWidth;
+        this.maxWidth = row.maxWidth;
+        this.init();
+        if(row.hasOwnProperty('columns')){
+            row.columns.forEach(function(column){
+                let grid_column = new GridColumn(_self,column.width);
+                grid_column.addFromRaw(column);
+                _self.addColumnToRow(column.id,grid_column)
+            })
+        }
+    }
 
     addColumn(defaultColumnWidth = 1, addItem = false) {
         let id = this.getNewElementId();
