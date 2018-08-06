@@ -11,7 +11,8 @@ class TextElement extends BaseElement {
     addFromRaw(item){
         let id = this.column.getNewElementId();
         //  let content = (new Unescape).do(item.content);
-        let content = GridHelper.decodeHtml(item.content);
+          let content = Unescape(item.content);
+        //let content = GridHelper.decodeHtml(item.content);
         let block = this.getHtmlBlock(id,content);
         let container = this.column.instance.querySelector('.grid__column--container');
         container.innerHTML = '';

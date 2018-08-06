@@ -544,7 +544,8 @@ var TextElement = function (_BaseElement) {
         value: function addFromRaw(item) {
             var id = this.column.getNewElementId();
             //  let content = (new Unescape).do(item.content);
-            var content = GridHelper.decodeHtml(item.content);
+            var content = Unescape(item.content);
+            //let content = GridHelper.decodeHtml(item.content);
             var block = this.getHtmlBlock(id, content);
             var container = this.column.instance.querySelector('.grid__column--container');
             container.innerHTML = '';
@@ -633,7 +634,7 @@ var GridColumn = function () {
             return {
                 items: items,
                 width: this.getWidth(),
-                empty: items.length ? false : true,
+                empty: this.isEmpty(),
                 id: this.id
             };
         }

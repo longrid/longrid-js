@@ -6,78 +6,78 @@
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
-class Unescape{
-    constructor(){
-        this.INFINITY = 1 / 0;
-        this.symbolTag = '[object Symbol]';
-        this.reEscapedHtml = /&(?:amp|lt|gt|quot|#39|#96);/g;
-        this.reHasEscapedHtml = RegExp(this.reEscapedHtml.source);
+function Unescape(text) {
 
-        this.htmlUnescapes = {
-            '&amp;': '&',
-            '&lt;': '<',
-            '&gt;': '>',
-            '&quot;': '"',
-            '&#39;': "'",
-            '&#96;': '`'
-        };
+    let INFINITY = 1 / 0;
+    let symbolTag = '[object Symbol]';
+    let reEscapedHtml = /&(?:amp|lt|gt|quot|#39|#96);/g;
+    let reHasEscapedHtml = RegExp(reEscapedHtml.source);
 
-        this.freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
+    let htmlUnescapes = {
+        '&amp;': '&',
+        '&lt;': '<',
+        '&gt;': '>',
+        '&quot;': '"',
+        '&#39;': "'",
+        '&#96;': '`'
+    };
 
-        this.freeSelf = typeof self == 'object' && self && self.Object === Object && self;
+    let freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
 
-        this.root = this.freeGlobal || this.freeSelf || Function('return this')();
+    let freeSelf = typeof self == 'object' && self && self.Object === Object && self;
 
-        this.unescapeHtmlChar = this.basePropertyOf(this.htmlUnescapes);
+    let root = freeGlobal || freeSelf || Function('return this')();
 
-        this.objectProto = Object.prototype;
+    let unescapeHtmlChar = basePropertyOf(htmlUnescapes);
 
-
-        this.objectToString = this.objectProto.toString;
-
-        this.Symbol = this.root.Symbol;
-
-        this.symbolProto = this.Symbol ? this.Symbol.prototype : undefined;
-            this.symbolToString = this.symbolProto ? this.symbolProto.toString : undefined;
+    let objectProto = Object.prototype;
 
 
+    let objectToString = objectProto.toString;
+
+    let Symbol = root.Symbol;
+
+    let symbolProto = Symbol ? Symbol.prototype : undefined;
+    let symbolToString = symbolProto ? symbolProto.toString : undefined;
 
 
-    }
-    basePropertyOf(object) {
-        return function(key) {
+    function basePropertyOf(object) {
+        return function (key) {
             return object == null ? undefined : object[key];
         };
     }
-     baseToString(value) {
+
+    function baseToString(value) {
         // Exit early for strings to avoid a performance hit in some environments.
         if (typeof value == 'string') {
             return value;
         }
         if (isSymbol(value)) {
-            return this.symbolToString ? this.symbolToString.call(value) : '';
+            return symbolToString ? symbolToString.call(value) : '';
         }
         var result = (value + '');
-        return (result == '0' && (1 / value) == -this.INFINITY) ? '-0' : result;
+        return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
     }
 
-     isObjectLike(value) {
+    function isObjectLike(value) {
         return !!value && typeof value == 'object';
     }
 
-     isSymbol(value) {
+    function isSymbol(value) {
         return typeof value == 'symbol' ||
-            (this.isObjectLike(value) && this.objectToString.call(value) == this.symbolTag);
+            (isObjectLike(value) && objectToString.call(value) == symbolTag);
     }
 
-     toString(value) {
-        return value == null ? '' : this.baseToString(value);
+    function toString(value) {
+        return value == null ? '' : baseToString(value);
     }
 
-     do(string) {
-        string = this.toString(string);
-        return (string && this.reHasEscapedHtml.test(string))
-            ? string.replace(this.reEscapedHtml, this.unescapeHtmlChar)
+    function unescape(string) {
+        string = toString(string);
+        return (string && reHasEscapedHtml.test(string))
+            ? string.replace(reEscapedHtml, unescapeHtmlChar)
             : string;
     }
-}
+
+    return unescape(text);
+} 

@@ -15,7 +15,7 @@ class GridColumn {
         return {
             items:items,
             width:this.getWidth(),
-            empty:items.length?false:true,
+            empty:this.isEmpty(),
             id:this.id
         };
     }
