@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -10,7 +10,7 @@ var GridHelper = function () {
     }
 
     _createClass(GridHelper, null, [{
-        key: "arrayToSortPattern",
+        key: 'arrayToSortPattern',
         value: function arrayToSortPattern(arr) {
             var obj = {};
             arr.forEach(function (item, index) {
@@ -19,26 +19,33 @@ var GridHelper = function () {
             return obj;
         }
     }, {
-        key: "getFilterd",
+        key: 'getFilterd',
         value: function getFilterd(arr, arr2) {
             return arr.filter(function (el) {
                 return !arr2.includes(el);
             });
         }
     }, {
-        key: "getHtml",
+        key: 'getHtml',
         value: function getHtml(id) {
             return document.getElementById(id).innerHTML;
         }
     }, {
-        key: "parseHTML",
+        key: 'decodeHtml',
+        value: function decodeHtml(html) {
+            var txt = document.createElement('textarea');
+            txt.innerHTML = html;
+            return txt.value;
+        }
+    }, {
+        key: 'parseHTML',
         value: function parseHTML(str) {
             var tmp = document.implementation.createHTMLDocument();
             tmp.body.innerHTML = str;
             return tmp.body.children;
         }
     }, {
-        key: "uniqueArray",
+        key: 'uniqueArray',
         value: function uniqueArray(arrArg) {
             return Array.from(new Set(arrArg));
         }
@@ -534,6 +541,19 @@ var TextElement = function (_BaseElement) {
     }
 
     _createClass(TextElement, [{
+        key: 'addFromRaw',
+        value: function addFromRaw(item) {
+            var id = this.column.getNewElementId();
+            var content = String.fromCharCode(item.content);
+            var block = this.getHtmlBlock(id, content);
+            console.log(content);
+            var container = this.column.instance.querySelector('.grid__column--container');
+            container.innerHTML = '';
+            container.appendChild(block);
+            this.instance = block;
+            this.init();
+        }
+    }, {
         key: 'getIcon',
         value: function getIcon() {
             return '<i class="fa fa-font"></i>';
@@ -542,6 +562,7 @@ var TextElement = function (_BaseElement) {
         key: 'getObject',
         value: function getObject() {
             return {
+                type: 'text',
                 id: this.id,
                 content: this.instance.querySelector('.editable').innerHTML
             };
@@ -554,7 +575,9 @@ var TextElement = function (_BaseElement) {
     }, {
         key: 'getHtmlBlock',
         value: function getHtmlBlock(id) {
-            var block = this.getTemplate(id);
+            var content = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+
+            var block = this.getTemplate(id, content);
             block = GridHelper.parseHTML(block);
             return block[0];
         }
@@ -639,8 +662,9 @@ var GridColumn = function () {
             this.init();
             if (column.hasOwnProperty('items')) {
                 column.items.forEach(function (item) {
-                    // let grid_column = new GridColumn(this);
-                    // grid_column.addFromRaw(this,column);
+                    var className = _self.getGrid().items[item.type];
+                    var instance = new className(item.id, _self);
+                    instance.addFromRaw(item);
                 });
             }
         }
@@ -656,15 +680,13 @@ var GridColumn = function () {
         key: 'addItem',
         value: function addItem(type) {
             var className = this.getGrid().items[type];
-            var item = new className(this);
-
             var id = this.getNewElementId();
+            var item = new className(id, this);
             var block = item.getHtmlBlock(id);
             var container = this.instance.querySelector('.grid__column--container');
             container.innerHTML = '';
             container.appendChild(block);
             item.instance = block;
-            item.id = id;
             item.init();
             this.addItemsToColumn(id, item);
             this.changeColumnStatus();

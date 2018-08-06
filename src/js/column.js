@@ -40,8 +40,9 @@ class GridColumn {
         this.init();
         if(column.hasOwnProperty('items')){
             column.items.forEach(function(item){
-                // let grid_column = new GridColumn(this);
-               // grid_column.addFromRaw(this,column);
+                let className = _self.getGrid().items[item.type];
+                let instance = new className(item.id,_self);
+                instance.addFromRaw(item);
             })
         }
     }
@@ -54,15 +55,13 @@ class GridColumn {
 
     addItem(type) {
         let className = this.getGrid().items[type];
-        let item = new className(this);
-
         let id = this.getNewElementId();
+        let item = new className(id,this);
         let block = item.getHtmlBlock(id);
         let container = this.instance.querySelector('.grid__column--container');
         container.innerHTML = '';
         container.appendChild(block);
         item.instance = block;
-        item.id = id;
         item.init();
         this.addItemsToColumn(id,item);
         this.changeColumnStatus();

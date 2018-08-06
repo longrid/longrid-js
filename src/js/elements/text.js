@@ -8,12 +8,24 @@ class TextElement extends BaseElement {
         this.content = null;
     }
 
+    addFromRaw(item){
+        let id = this.column.getNewElementId();
+        let content = String.fromCharCode(item.content);
+        let block = this.getHtmlBlock(id,content);
+        console.log(content);
+        let container = this.column.instance.querySelector('.grid__column--container');
+        container.innerHTML = '';
+        container.appendChild(block);
+        this.instance = block;
+        this.init();
+    }
     getIcon() {
         return '<i class="fa fa-font"></i>';
     }
 
     getObject() {
         return {
+            type:'text',
             id:this.id,
             content:this.instance.querySelector('.editable').innerHTML
         }
@@ -22,8 +34,8 @@ class TextElement extends BaseElement {
     getTemplateId() {
         return 'textBlock';
     }
-    getHtmlBlock(id){
-        let block = this.getTemplate(id);
+    getHtmlBlock(id,content = ''){
+        let block = this.getTemplate(id,content);
         block = GridHelper.parseHTML(block);
         return block[0];
     }

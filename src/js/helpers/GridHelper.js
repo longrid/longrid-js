@@ -14,7 +14,11 @@ class GridHelper {
     static getHtml(id) {
         return document.getElementById(id).innerHTML;
     }
-
+    static decodeHtml(html){
+        let txt = document.createElement('textarea');
+        txt.innerHTML = html;
+        return txt.value;
+    }
     static parseHTML(str) {
         let tmp = document.implementation.createHTMLDocument();
         tmp.body.innerHTML = str;
