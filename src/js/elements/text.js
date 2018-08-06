@@ -13,7 +13,6 @@ class TextElement extends BaseElement {
         //  let content = (new Unescape).do(item.content);
         let content = GridHelper.decodeHtml(item.content);
         let block = this.getHtmlBlock(id,content);
-        console.log(content);
         let container = this.column.instance.querySelector('.grid__column--container');
         container.innerHTML = '';
         container.appendChild(block);

@@ -15,6 +15,7 @@ class GridColumn {
         return {
             items:items,
             width:this.getWidth(),
+            empty:items.length?false:true,
             id:this.id
         };
     }
@@ -30,7 +31,8 @@ class GridColumn {
     }
     addFromRaw(column){
         let _self = this;
-        let block = this.getTemplate(column.id);
+       // let empty = column.items.length?false:true;
+        let block = this.getTemplate(column.id,column.empty);
         block = GridHelper.parseHTML(block);
         block = block[0];
         let row = this.row.instance.querySelector('.grid__row--container');
@@ -38,11 +40,13 @@ class GridColumn {
         this.instance = block;
         this.id = column.id;
         this.init();
+
         if(column.hasOwnProperty('items')){
             column.items.forEach(function(item){
                 let className = _self.getGrid().items[item.type];
                 let instance = new className(item.id,_self);
                 instance.addFromRaw(item);
+                _self.addItemsToColumn(item.id,instance);
             })
         }
     }
@@ -80,17 +84,6 @@ class GridColumn {
 
     changeDataWidth() {
         this.instance.setAttribute('data-width', this.width);
-    }
-
-    collectItemData(column) {
-        let items = [];
-        let _self = this;
-        column.find('.grid__item').each(function () {
-            let type = $(this).data('type');
-            let item = new _self.grid.items[type]();
-            items.push(item.getObject($(this)));
-        });
-        return items;
     }
 
     decreaseWidth() {
@@ -142,9 +135,9 @@ class GridColumn {
         return this.row.grid;
     }
 
-    getTemplate(id) {
+    getTemplate(id,empty = true) {
         let _self = this;
-        let template = ` <div class="grid__column empty" data-width="${_self.getWidth()}" data-id="${id}">
+        let template = ` <div class="grid__column ${empty?'empty':''}" data-width="${_self.getWidth()}" data-id="${id}">
         <div class="grid__column--control"> 
             <div class="grid__column--move">
                 <i class="fa fa-arrows"></i>
@@ -157,7 +150,7 @@ class GridColumn {
             </div>
              <div class="grid__column--action" data-action="removeColumn">
                 <i class="fa fa-trash"></i>
-            </div>   
+            </div>
         </div>
         <div class="grid__column--container">
            
