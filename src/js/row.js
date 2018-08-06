@@ -69,10 +69,10 @@ class GridRow {
         this.columns.set(id, column);
     }
 
-    addOrChangeEmptyColumn(times = 1) {
+    addOrChangeEmptyColumn(times = 1,decreaseAction = false) {
         for (let i = 0; i < times; i++) {
             if (this.getAvailableWidth() > 0) {
-                let emptyItem = this.hasEmptyColumns();
+                let emptyItem = this.hasEmptyColumns(decreaseAction);
                 if (!emptyItem) {
                     this.addColumn(1);
                 } else {
@@ -184,7 +184,7 @@ class GridRow {
         return 'rowBlock';
     }
 
-    hasEmptyColumns() {
+    hasEmptyColumns(decreaseAction = false) {
         let has = false;
         let _self = this;
         let items = {
@@ -193,7 +193,6 @@ class GridRow {
         };
         let arrName = 'before';
         this.columns.forEach(function(item){
-            console.log(item,_self.inActionColumn);
             if(item == _self.inActionColumn){
                 arrName = 'after';
             } else{
@@ -208,11 +207,12 @@ class GridRow {
                 return has;
             }
         }
-        if(!items.after.length){
-            if(this.canAddColumn(1)){
+        if(decreaseAction){
+            if(!items.after.length){
                 return false;
             }
         }
+
         for (let item of items.before) {
             if (item.isEmpty()) {
                 has = item;

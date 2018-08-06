@@ -69,7 +69,7 @@ class GridColumn {
             this.width = this.width - 1;
             this.row.setWidth(-1, this.isEmpty());
             if (!this.isEmpty()) {
-                this.row.addOrChangeEmptyColumn()
+                this.row.addOrChangeEmptyColumn(1,true)
             }
         } else {
             throw new Error(`can't change column width to -`);

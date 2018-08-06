@@ -663,7 +663,7 @@ var GridColumn = function () {
                 this.width = this.width - 1;
                 this.row.setWidth(-1, this.isEmpty());
                 if (!this.isEmpty()) {
-                    this.row.addOrChangeEmptyColumn();
+                    this.row.addOrChangeEmptyColumn(1, true);
                 }
             } else {
                 throw new Error('can\'t change column width to -');
@@ -906,10 +906,11 @@ var GridRow = function () {
         key: 'addOrChangeEmptyColumn',
         value: function addOrChangeEmptyColumn() {
             var times = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+            var decreaseAction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
             for (var i = 0; i < times; i++) {
                 if (this.getAvailableWidth() > 0) {
-                    var emptyItem = this.hasEmptyColumns();
+                    var emptyItem = this.hasEmptyColumns(decreaseAction);
                     if (!emptyItem) {
                         this.addColumn(1);
                     } else {
@@ -1018,6 +1019,8 @@ var GridRow = function () {
     }, {
         key: 'hasEmptyColumns',
         value: function hasEmptyColumns() {
+            var decreaseAction = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
             var has = false;
             var _self = this;
             var items = {
@@ -1026,7 +1029,6 @@ var GridRow = function () {
             };
             var arrName = 'before';
             this.columns.forEach(function (item) {
-                console.log(item, _self.inActionColumn);
                 if (item == _self.inActionColumn) {
                     arrName = 'after';
                 } else {
@@ -1062,11 +1064,12 @@ var GridRow = function () {
                 }
             }
 
-            if (!items.after.length) {
-                if (this.canAddColumn(1)) {
+            if (decreaseAction) {
+                if (!items.after.length) {
                     return false;
                 }
             }
+
             var _iteratorNormalCompletion2 = true;
             var _didIteratorError2 = false;
             var _iteratorError2 = undefined;
