@@ -1408,16 +1408,6 @@ var Grid = function () {
             this.rows.set(id, row);
         }
     }, {
-        key: 'collectGridData',
-        value: function collectGridData() {
-            var row = new GridRow();
-            var _self = this;
-            var rows = [];
-            return {
-                'rows': rows
-            };
-        }
-    }, {
         key: 'getCleanClone',
         value: function getCleanClone() {
             var clone = Object.assign(Object.create(this), this);

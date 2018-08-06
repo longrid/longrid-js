@@ -51,20 +51,11 @@ class Grid {
         this.rows.set(id, row);
     }
 
-    collectGridData() {
-        let row = new GridRow();
-        let _self = this;
-        let rows = [];
-        return {
-            'rows': rows
-        };
-    }
-
     getCleanClone() {
         let clone = Object.assign(Object.create(this), this);
         let rows = [];
-        clone.rows.forEach(function (row,index) {
-          rows.push(row.getObject())
+        clone.rows.forEach(function (row, index) {
+            rows.push(row.getObject())
         });
         clone.rows = rows;
         delete clone.sortable;
