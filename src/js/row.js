@@ -37,7 +37,7 @@ class GridRow {
         let id = this.getNewElementId();
         let column = new GridColumn(this, defaultColumnWidth);
         if (this.canAddColumn(column.getWidth())) {
-            column.add(id, addItem);
+            column.add(id);
             this.addColumnToRow(id, column);
             this.setWidth(column.getWidth(), column.isEmpty());
             if (addItem) {
@@ -205,7 +205,12 @@ class GridRow {
             if (item.isEmpty()) {
                 has = item;
                 return has;
+            } else{
+                if(decreaseAction){
+                    return false;
+                }
             }
+
         }
         if(decreaseAction){
             if(!items.after.length){
@@ -347,8 +352,12 @@ class GridRow {
     }
 
     removeRow() {
-        this.instance.remove();
-        this.grid.rows.delete(this.id);
+        let removeConfirm = confirm('Are you sure to delete?');
+        if (removeConfirm) {
+            this.instance.remove();
+            this.grid.rows.delete(this.id);
+        }
+        return false;
     }
 
     reverseSortedColumn(e) {
@@ -371,5 +380,18 @@ class GridRow {
         this.columns = new Map([...this.columns.entries()].sort(function (x, y) {
             return pattern[x[0]] - pattern[y[0]];
         }));
+    }
+    getObject(){
+        let columns = [];
+        this.columns.forEach(function (column) {
+           columns.push(column.getObject());
+        });
+        return {
+            columns:columns,
+            id: this.id,
+            maxWidth: this.maxWidth,
+            itemsWidth: this.itemsWidth,
+            emptyWidth: this.emptyWidth,
+        }
     }
 }

@@ -1,12 +1,23 @@
 class GridColumn {
     constructor(row, width = 1) {
-        this.items = {};
+        this.items = new Map();
         this.row = row;
         this.instance = null;
         this.width = width;
         this.id = null;
     }
+    getObject(){
+        let items = [];
+        this.items.forEach(function(item){
+            items.push(item.getObject());
+        });
 
+        return {
+            items:items,
+            width:this.getWidth(),
+            id:this.id
+        };
+    }
     add(id) {
         let row = this.row.instance.querySelector('.grid__row--container');
         let block = this.getTemplate(id);
@@ -27,13 +38,22 @@ class GridColumn {
 
     addItem(type) {
         let className = this.getGrid().items[type];
-        let item = new className();
-        let html_block = item.getHtmlBlock();
+        let item = new className(this);
+        let block = item.getHtmlBlock();
+        let id = this.getNewElementId();
         let container = this.instance.querySelector('.grid__column--container');
         container.innerHTML = '';
-        container.appendChild(html_block);
-        item.init(this.instance);
+        container.appendChild(block);
+        item.instance = block;
+        item.id = id;
+        item.init();
+        this.addItemsToColumn(id,item);
         this.changeColumnStatus();
+
+    }
+
+    addItemsToColumn(id, item) {
+        this.items.set(id, item);
     }
 
     changeColumnStatus() {
@@ -92,6 +112,16 @@ class GridColumn {
         return template;
     }
 
+    getNewElementId() {
+
+        let keys = [...this.items.keys()];
+        if (keys.length > 0) {
+            return Math.max(...keys) + 1;
+        } else {
+            return 1;
+        }
+
+    }
     getGrid() {
         return this.row.grid;
     }

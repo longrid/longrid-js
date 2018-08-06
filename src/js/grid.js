@@ -55,9 +55,6 @@ class Grid {
         let row = new GridRow();
         let _self = this;
         let rows = [];
-        [].forEach.call(this.container.querySelectorAll('.grid__row'), function () {
-            rows.push(row.collectColumnData(this));
-        });
         return {
             'rows': rows
         };
@@ -65,17 +62,14 @@ class Grid {
 
     getCleanClone() {
         let clone = Object.assign(Object.create(this), this);
-        clone.rows.forEach(function (row) {
-            row.columns.forEach(function (column) {
-                delete column.row;
-            });
-
-            delete row.grid;
+        let rows = [];
+        clone.rows.forEach(function (row,index) {
+          rows.push(row.getObject())
         });
-        clone.rows.forEach(function (row) {
-            row.columns = [...row.columns.values()];
-        });
-        clone.rows = [...clone.rows.values()];
+        clone.rows = rows;
+        delete clone.sortable;
+        delete clone.raw;
+        delete clone.items;
         clone.container = clone.container.id;
         return clone;
     }
@@ -131,15 +125,6 @@ class Grid {
 
     }
 
-    /**
-     sort(arr, pattern = undefined) {
-        return new Map(arr.sort(pattern));
-
-        //let map = {3:0,2:3,1:2};
-        //clone.rows = clone.sort([...this.rows.entries()],function(x, y){ return map[x[0]] - map[y[0]]; });
-
-    }
-     */
 
     sortRows(pattern) {
         this.rows = new Map([...this.rows.entries()].sort(function (x, y) {

@@ -47,9 +47,6 @@ class BaseElement extends AbstractElement{
         });
     }
 
-    //return Object for column
-    getObject(item){
-        return {};
-    }
+
 
 }

@@ -14,11 +14,10 @@ class AbstractElement{
         throw new Error(`static initButtons() должен быть реализован`)
     }
     /**
-     * should return object {}
-     * @param item
+     * should prepare to create json
      */
-    getObject(item) {
-        throw new Error(`getObject(item) должен быть реализован`)
+    getObject() {
+        throw new Error(`getCleanClone() должен быть реализован`)
     }
 
     /**

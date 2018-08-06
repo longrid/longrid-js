@@ -1,18 +1,21 @@
 class TextElement extends BaseElement {
-    constructor(column) {
+    constructor(id,column) {
         super();
         this.column = column;
         this.instance = null;
+        this.id = id;
+        this.type = 'text';
+        this.content = null;
     }
 
     getIcon() {
         return '<i class="fa fa-font"></i>';
     }
 
-    getObject(item) {
+    getObject() {
         return {
-            'type': item.data('type'),
-            'content': item.find('.editable').html()
+            id:this.id,
+            content:this.instance.querySelector('.editable').innerHTML
         }
     }
 

@@ -100,11 +100,10 @@ var AbstractElement = function () {
         key: "getObject",
 
         /**
-         * should return object {}
-         * @param item
+         * should prepare to create json
          */
-        value: function getObject(item) {
-            throw new Error("getObject(item) \u0434\u043E\u043B\u0436\u0435\u043D \u0431\u044B\u0442\u044C \u0440\u0435\u0430\u043B\u0438\u0437\u043E\u0432\u0430\u043D");
+        value: function getObject() {
+            throw new Error("getCleanClone() \u0434\u043E\u043B\u0436\u0435\u043D \u0431\u044B\u0442\u044C \u0440\u0435\u0430\u043B\u0438\u0437\u043E\u0432\u0430\u043D");
         }
 
         /**
@@ -190,14 +189,6 @@ var BaseElement = function (_AbstractElement) {
                 },
                 imageDragging: false
             });
-        }
-
-        //return Object for column
-
-    }, {
-        key: 'getObject',
-        value: function getObject(item) {
-            return {};
         }
     }]);
 
@@ -535,13 +526,16 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var TextElement = function (_BaseElement) {
     _inherits(TextElement, _BaseElement);
 
-    function TextElement(column) {
+    function TextElement(id, column) {
         _classCallCheck(this, TextElement);
 
         var _this = _possibleConstructorReturn(this, (TextElement.__proto__ || Object.getPrototypeOf(TextElement)).call(this));
 
         _this.column = column;
         _this.instance = null;
+        _this.id = id;
+        _this.type = 'text';
+        _this.content = null;
         return _this;
     }
 
@@ -552,10 +546,10 @@ var TextElement = function (_BaseElement) {
         }
     }, {
         key: 'getObject',
-        value: function getObject(item) {
+        value: function getObject() {
             return {
-                'type': item.data('type'),
-                'content': item.find('.editable').html()
+                id: this.id,
+                content: this.instance.querySelector('.editable').innerHTML
             };
         }
     }, {
@@ -581,6 +575,8 @@ var TextElement = function (_BaseElement) {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var GridColumn = function () {
@@ -589,7 +585,7 @@ var GridColumn = function () {
 
         _classCallCheck(this, GridColumn);
 
-        this.items = {};
+        this.items = new Map();
         this.row = row;
         this.instance = null;
         this.width = width;
@@ -597,6 +593,20 @@ var GridColumn = function () {
     }
 
     _createClass(GridColumn, [{
+        key: 'getObject',
+        value: function getObject() {
+            var items = [];
+            this.items.forEach(function (item) {
+                items.push(item.getObject());
+            });
+
+            return {
+                items: items,
+                width: this.getWidth(),
+                id: this.id
+            };
+        }
+    }, {
         key: 'add',
         value: function add(id) {
             var row = this.row.instance.querySelector('.grid__row--container');
@@ -619,13 +629,22 @@ var GridColumn = function () {
         key: 'addItem',
         value: function addItem(type) {
             var className = this.getGrid().items[type];
-            var item = new className();
-            var html_block = item.getHtmlBlock();
+            var item = new className(this);
+            var block = item.getHtmlBlock();
+            var id = this.getNewElementId();
             var container = this.instance.querySelector('.grid__column--container');
             container.innerHTML = '';
-            container.appendChild(html_block);
-            item.init(this.instance);
+            container.appendChild(block);
+            item.instance = block;
+            item.id = id;
+            item.init();
+            this.addItemsToColumn(id, item);
             this.changeColumnStatus();
+        }
+    }, {
+        key: 'addItemsToColumn',
+        value: function addItemsToColumn(id, item) {
+            this.items.set(id, item);
         }
     }, {
         key: 'changeColumnStatus',
@@ -683,6 +702,17 @@ var GridColumn = function () {
                 }
             }
             return template;
+        }
+    }, {
+        key: 'getNewElementId',
+        value: function getNewElementId() {
+
+            var keys = [].concat(_toConsumableArray(this.items.keys()));
+            if (keys.length > 0) {
+                return Math.max.apply(Math, _toConsumableArray(keys)) + 1;
+            } else {
+                return 1;
+            }
         }
     }, {
         key: 'getGrid',
@@ -870,7 +900,7 @@ var GridRow = function () {
             var id = this.getNewElementId();
             var column = new GridColumn(this, defaultColumnWidth);
             if (this.canAddColumn(column.getWidth())) {
-                column.add(id, addItem);
+                column.add(id);
                 this.addColumnToRow(id, column);
                 this.setWidth(column.getWidth(), column.isEmpty());
                 if (addItem) {
@@ -1047,6 +1077,10 @@ var GridRow = function () {
                     if (item.isEmpty()) {
                         has = item;
                         return has;
+                    } else {
+                        if (decreaseAction) {
+                            return false;
+                        }
                     }
                 }
             } catch (err) {
@@ -1234,8 +1268,12 @@ var GridRow = function () {
     }, {
         key: 'removeRow',
         value: function removeRow() {
-            this.instance.remove();
-            this.grid.rows.delete(this.id);
+            var removeConfirm = confirm('Are you sure to delete?');
+            if (removeConfirm) {
+                this.instance.remove();
+                this.grid.rows.delete(this.id);
+            }
+            return false;
         }
     }, {
         key: 'reverseSortedColumn',
@@ -1259,6 +1297,21 @@ var GridRow = function () {
             this.columns = new Map([].concat(_toConsumableArray(this.columns.entries())).sort(function (x, y) {
                 return pattern[x[0]] - pattern[y[0]];
             }));
+        }
+    }, {
+        key: 'getObject',
+        value: function getObject() {
+            var columns = [];
+            this.columns.forEach(function (column) {
+                columns.push(column.getObject());
+            });
+            return {
+                columns: columns,
+                id: this.id,
+                maxWidth: this.maxWidth,
+                itemsWidth: this.itemsWidth,
+                emptyWidth: this.emptyWidth
+            };
         }
     }]);
 
@@ -1360,9 +1413,6 @@ var Grid = function () {
             var row = new GridRow();
             var _self = this;
             var rows = [];
-            [].forEach.call(this.container.querySelectorAll('.grid__row'), function () {
-                rows.push(row.collectColumnData(this));
-            });
             return {
                 'rows': rows
             };
@@ -1371,17 +1421,14 @@ var Grid = function () {
         key: 'getCleanClone',
         value: function getCleanClone() {
             var clone = Object.assign(Object.create(this), this);
-            clone.rows.forEach(function (row) {
-                row.columns.forEach(function (column) {
-                    delete column.row;
-                });
-
-                delete row.grid;
+            var rows = [];
+            clone.rows.forEach(function (row, index) {
+                rows.push(row.getObject());
             });
-            clone.rows.forEach(function (row) {
-                row.columns = [].concat(_toConsumableArray(row.columns.values()));
-            });
-            clone.rows = [].concat(_toConsumableArray(clone.rows.values()));
+            clone.rows = rows;
+            delete clone.sortable;
+            delete clone.raw;
+            delete clone.items;
             clone.container = clone.container.id;
             return clone;
         }
@@ -1439,15 +1486,6 @@ var Grid = function () {
             });
             this.sortable = sort;
         }
-
-        /**
-         sort(arr, pattern = undefined) {
-            return new Map(arr.sort(pattern));
-              //let map = {3:0,2:3,1:2};
-            //clone.rows = clone.sort([...this.rows.entries()],function(x, y){ return map[x[0]] - map[y[0]]; });
-          }
-         */
-
     }, {
         key: 'sortRows',
         value: function sortRows(pattern) {
