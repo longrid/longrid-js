@@ -41,7 +41,7 @@
           "items": [
             {
               "id": 1,
-              "content": "<p>1</p>"
+              "content": "<p>hello</p>"
             }
           ],
           "width": 2,
