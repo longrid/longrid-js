@@ -555,6 +555,7 @@ var GridColumn = function () {
             container.appendChild(block);
             item.instance = block;
             item.init();
+            item.addIcon();
             this.addItemsToColumn(id, item);
             this.changeColumnStatus();
         }
