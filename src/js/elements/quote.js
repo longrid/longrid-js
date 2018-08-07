@@ -1,4 +1,4 @@
-class QuoteElement extends BaseElement{
+class QuoteElement extends AbstractElement{
     getTemplateId(){
         return 'quoteBlock';
     }

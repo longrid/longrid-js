@@ -222,114 +222,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var BaseElement = function (_AbstractElement) {
-    _inherits(BaseElement, _AbstractElement);
-
-    function BaseElement() {
-        _classCallCheck(this, BaseElement);
-
-        return _possibleConstructorReturn(this, (BaseElement.__proto__ || Object.getPrototypeOf(BaseElement)).apply(this, arguments));
-    }
-
-    _createClass(BaseElement, [{
-        key: 'getHtmlBlock',
-        value: function getHtmlBlock() {
-            var block = GridHelper.getHtml(this.getTemplateId()).trim();
-            block = GridHelper.parseHTML(block);
-            return block[0];
-        }
-    }, {
-        key: 'getTemplateId',
-        value: function getTemplateId() {
-            return 'baseElement';
-        }
-    }, {
-        key: 'init',
-        value: function init() {
-            this.initMedium();
-        }
-    }, {
-        key: 'initMedium',
-        value: function initMedium() {
-            var placeholder = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'Введите текст...';
-
-            var editor = new MediumEditor('.editable', {
-                toolbar: {
-                    /* These are the default options for the toolbar,
-                     if nothing is passed this is what is used */
-                    allowMultiParagraphSelection: true,
-                    buttons: ['bold', 'italic', 'h3', 'anchor', 'justifyLeft', 'justifyCenter', 'justifyRight', 'removeFormat'],
-                    diffLeft: 0,
-                    diffTop: -10,
-                    firstButtonClass: 'medium-editor-button-first',
-                    lastButtonClass: 'medium-editor-button-last',
-                    standardizeSelectionStart: false,
-                    static: false,
-                    relativeContainer: null,
-                    /* options which only apply when static is true */
-                    align: 'center',
-                    sticky: false,
-                    updateOnEmptySelection: false
-                },
-                placeholder: {
-                    text: placeholder,
-                    hideOnClick: true
-                },
-                imageDragging: false
-            });
-        }
-    }]);
-
-    return BaseElement;
-}(AbstractElement);
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var QuoteElement = function (_BaseElement) {
-    _inherits(QuoteElement, _BaseElement);
-
-    function QuoteElement() {
-        _classCallCheck(this, QuoteElement);
-
-        return _possibleConstructorReturn(this, (QuoteElement.__proto__ || Object.getPrototypeOf(QuoteElement)).apply(this, arguments));
-    }
-
-    _createClass(QuoteElement, [{
-        key: 'getTemplateId',
-        value: function getTemplateId() {
-            return 'quoteBlock';
-        }
-    }, {
-        key: 'getObject',
-        value: function getObject(item) {
-            return {
-                'type': item.data('type'),
-                'content': item.find('.editable').html()
-            };
-        }
-    }]);
-
-    return QuoteElement;
-}(BaseElement);
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var FrameElement = function (_BaseElement) {
-    _inherits(FrameElement, _BaseElement);
+var FrameElement = function (_AbstractElement) {
+    _inherits(FrameElement, _AbstractElement);
 
     function FrameElement() {
         _classCallCheck(this, FrameElement);
@@ -354,7 +248,7 @@ var FrameElement = function (_BaseElement) {
     }]);
 
     return FrameElement;
-}(BaseElement);
+}(AbstractElement);
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -365,160 +259,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var GalleryElement = function (_BaseElement) {
-    _inherits(GalleryElement, _BaseElement);
-
-    function GalleryElement() {
-        _classCallCheck(this, GalleryElement);
-
-        return _possibleConstructorReturn(this, (GalleryElement.__proto__ || Object.getPrototypeOf(GalleryElement)).apply(this, arguments));
-    }
-
-    _createClass(GalleryElement, [{
-        key: 'init',
-        value: function init(container) {
-            this.initControlButtons();
-            this.initImageUpload();
-            this.container = container.find('.grid__item--gallery').get(0);
-            this.initSortable();
-        }
-    }, {
-        key: 'getItemTemplate',
-        value: function getItemTemplate() {
-            return '<div class="grid__item--gallery__item empty">\n' + '            <div class="image__placeholder">\n' + '            </div>\n' + '            <div class="editable"></div>\n' + '            <div class="grid__btn remove"><i class="fa fa-trash"></i> Удалить фото</div>\n' + '        </div>';
-        }
-    }, {
-        key: 'initImageUpload',
-        value: function initImageUpload() {
-            var _self = this;
-            $('.add-images').fileupload({
-                dataType: 'json',
-                add: function add(e, data) {
-                    var self = $(this);
-                    $.each(data.files, function (index, file) {
-                        _self.createPlaceholder(self);
-                    });
-                    if (e.isDefaultPrevented()) {
-                        return false;
-                    }
-                    if (data.autoUpload || data.autoUpload !== false && $(this).fileupload('option', 'autoUpload')) {
-                        data.process().done(function () {
-                            data.submit();
-                        });
-                    }
-                },
-                done: function done(e, data) {
-                    // $(this).parent().find('input').hide();
-                    _self.addImagesToContainer($(this), data);
-                },
-                fail: function fail(e, data) {
-                    alert('failed');
-                    console.log(data);
-                }
-            });
-        }
-    }, {
-        key: 'initSortable',
-        value: function initSortable() {
-            var container = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-
-            var _self = this;
-            var _container = void 0;
-            if (container === null) {
-                _container = _self.container;
-            } else {
-                _container = container;
-            }
-
-            var sort = Sortable.create(_container, {
-                animation: 150, // ms, animation speed moving items when sorting, `0` — without animation
-                scrollSpeed: 10,
-                scrollSensitivity: 70,
-                handle: ".image__placeholder", // Restricts sort start click/touch to the specified element
-                draggable: ".grid__item--gallery__item" // Specifies which items inside the element should be sortable
-            });
-        }
-    }, {
-        key: 'createPlaceholder',
-        value: function createPlaceholder(self) {
-            var item = $.parseHTML(this.getItemTemplate())[0];
-            item = $(item);
-            self.closest('.grid__row').find('.grid__item--gallery').append(item);
-            this.initMedium('Описание фото...');
-        }
-    }, {
-        key: 'addImagesToContainer',
-        value: function addImagesToContainer(self, data) {
-            var block = self.closest('.grid__row').find('.grid__item--gallery__item.empty').first();
-            block.removeClass('empty');
-            block.find('.image__placeholder').append('<img src="' + data.result + '" />');
-        }
-    }, {
-        key: 'initControlButtons',
-        value: function initControlButtons() {
-            var _self = this;
-            $(document).on("click", '.grid__item--gallery__item .remove', function () {
-                _self.removeImage($(this).closest(".grid__item--gallery__item"));
-            });
-        }
-    }, {
-        key: 'removeImage',
-        value: function removeImage(container) {
-            var src = container.find('img').attr('src');
-            $.get("/admin.php/pages/longrid/remove-media?url=" + src, function (data) {});
-            container.remove();
-        }
-    }, {
-        key: 'getTemplateId',
-        value: function getTemplateId() {
-            return 'galleryBlock';
-        }
-    }, {
-        key: 'getItemsObject',
-        value: function getItemsObject(item) {
-            var items = [];
-            item.find('.grid__item--gallery__item').each(function () {
-                items.push({
-                    'image': $(this).find('.image__placeholder img').attr('src'),
-                    'content': $(this).find('.editable').html()
-                });
-            });
-            return items;
-        }
-    }, {
-        key: 'getObject',
-        value: function getObject(item) {
-            return {
-                'type': item.data('type'),
-                'items': this.getItemsObject(item)
-            };
-        }
-    }], [{
-        key: 'initFromHtml',
-        value: function initFromHtml() {
-            var _self = new GalleryElement();
-            _self.initControlButtons();
-            _self.initImageUpload();
-            $('.grid__item--gallery').each(function () {
-                _self.initSortable($(this).get(0));
-            });
-        }
-    }]);
-
-    return GalleryElement;
-}(BaseElement);
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var ImageElement = function (_BaseElement) {
-    _inherits(ImageElement, _BaseElement);
+var ImageElement = function (_AbstractElement) {
+    _inherits(ImageElement, _AbstractElement);
 
     function ImageElement() {
         _classCallCheck(this, ImageElement);
@@ -600,7 +342,7 @@ var ImageElement = function (_BaseElement) {
     }]);
 
     return ImageElement;
-}(BaseElement);
+}(AbstractElement);
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -611,8 +353,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var TextElement = function (_BaseElement) {
-    _inherits(TextElement, _BaseElement);
+var TextElement = function (_AbstractElement) {
+    _inherits(TextElement, _AbstractElement);
 
     function TextElement(id, column) {
         _classCallCheck(this, TextElement);
@@ -624,6 +366,7 @@ var TextElement = function (_BaseElement) {
         _this.id = id;
         _this.type = 'text';
         _this.content = null;
+        _this.editor = null;
         return _this;
     }
 
@@ -686,10 +429,41 @@ var TextElement = function (_BaseElement) {
         value: function init() {
             this.initMedium();
         }
+    }, {
+        key: 'initMedium',
+        value: function initMedium() {
+            var placeholder = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'Введите текст...';
+
+            var selector = this.instance.querySelector('.editable');
+            this.editor = new MediumEditor(selector, {
+                toolbar: {
+                    /* These are the default options for the toolbar,
+                     if nothing is passed this is what is used */
+                    allowMultiParagraphSelection: true,
+                    buttons: ['bold', 'italic', 'h3', 'anchor', 'justifyLeft', 'justifyCenter', 'justifyRight', 'removeFormat'],
+                    diffLeft: 0,
+                    diffTop: -10,
+                    firstButtonClass: 'medium-editor-button-first',
+                    lastButtonClass: 'medium-editor-button-last',
+                    standardizeSelectionStart: false,
+                    static: false,
+                    relativeContainer: null,
+                    /* options which only apply when static is true */
+                    align: 'center',
+                    sticky: false,
+                    updateOnEmptySelection: false
+                },
+                placeholder: {
+                    text: placeholder,
+                    hideOnClick: true
+                },
+                imageDragging: false
+            });
+        }
     }]);
 
     return TextElement;
-}(BaseElement);
+}(AbstractElement);
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();

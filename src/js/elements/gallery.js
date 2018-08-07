@@ -1,4 +1,4 @@
-class GalleryElement extends BaseElement {
+class GalleryElement extends AbstractElement {
 
     init(container) {
         this.initControlButtons();

@@ -1,4 +1,4 @@
-class ImageElement extends BaseElement{
+class ImageElement extends AbstractElement{
     init(){
         this.initControlButtons();
     }

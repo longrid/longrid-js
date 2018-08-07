@@ -1,4 +1,4 @@
-class FrameElement extends BaseElement{
+class FrameElement extends AbstractElement{
     getTemplateId(){
         return 'frameBlock';
     }

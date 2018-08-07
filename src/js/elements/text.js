@@ -1,4 +1,4 @@
-class TextElement extends BaseElement {
+class TextElement extends AbstractElement {
     constructor(id,column) {
         super();
         this.column = column;
@@ -6,6 +6,7 @@ class TextElement extends BaseElement {
         this.id = id;
         this.type = 'text';
         this.content = null;
+        this.editor = null;
     }
 
     addFromRaw(item){
@@ -55,5 +56,41 @@ class TextElement extends BaseElement {
 
     init() {
         this.initMedium();
+    }
+    initMedium(placeholder = 'Введите текст...'){
+        let selector = this.instance.querySelector('.editable');
+        this.editor = new MediumEditor(selector,{
+            toolbar: {
+                /* These are the default options for the toolbar,
+                 if nothing is passed this is what is used */
+                allowMultiParagraphSelection: true,
+                buttons: [
+                    'bold',
+                    'italic',
+                    'h3',
+                    'anchor',
+                    'justifyLeft',
+                    'justifyCenter',
+                    'justifyRight',
+                    'removeFormat'
+                ],
+                diffLeft: 0,
+                diffTop: -10,
+                firstButtonClass: 'medium-editor-button-first',
+                lastButtonClass: 'medium-editor-button-last',
+                standardizeSelectionStart: false,
+                static: false,
+                relativeContainer: null,
+                /* options which only apply when static is true */
+                align: 'center',
+                sticky: false,
+                updateOnEmptySelection: false
+            },
+            placeholder: {
+                text: placeholder,
+                hideOnClick: true
+            },
+            imageDragging: false
+        });
     }
 }
