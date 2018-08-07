@@ -190,6 +190,7 @@ var GridColumn = function () {
                     var className = _self.getGrid().items[item.type];
                     var instance = new className(item.id, _self);
                     instance.addFromRaw(item);
+                    instance.addIcon();
                     _self.addItemsToColumn(item.id, instance);
                 });
             }

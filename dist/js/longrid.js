@@ -399,8 +399,8 @@ var TextElement = function (_AbstractElement) {
             };
         }
     }, {
-        key: 'addIconToRow',
-        value: function addIconToRow() {
+        key: 'addIcon',
+        value: function addIcon() {
             var icon = this.getIcon();
             var html = GridHelper.parseHTML('<div class="grid__row--icon">' + icon + '</div>')[0];
             var controls = this.instance.closest('.grid__column').querySelector('.grid__column--control');
@@ -436,7 +436,6 @@ var TextElement = function (_AbstractElement) {
         key: 'init',
         value: function init() {
             this.initMedium();
-            this.addIconToRow();
         }
     }, {
         key: 'initMedium',
@@ -539,6 +538,7 @@ var GridColumn = function () {
                     var className = _self.getGrid().items[item.type];
                     var instance = new className(item.id, _self);
                     instance.addFromRaw(item);
+                    instance.addIcon();
                     _self.addItemsToColumn(item.id, instance);
                 });
             }
