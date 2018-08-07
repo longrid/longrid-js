@@ -835,7 +835,6 @@ var GridRow = function () {
                 this.setWidth(column.getWidth(), column.isEmpty());
                 if (addItem) {
                     if (this.grid.options.hasOwnProperty('defaultItem')) {
-                        column.addIconToRow(column.instance.querySelector('.grid__column--add_item[data-type="' + this.grid.options.defaultItem + '"]'));
                         column.addItem(this.grid.options.defaultItem);
                     }
                 }
