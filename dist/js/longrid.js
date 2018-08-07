@@ -399,6 +399,14 @@ var TextElement = function (_AbstractElement) {
             };
         }
     }, {
+        key: 'addIconToRow',
+        value: function addIconToRow() {
+            var icon = this.getIcon();
+            var html = GridHelper.parseHTML('<div class="grid__row--icon">' + icon + '</div>')[0];
+            var controls = this.instance.closest('.grid__column').querySelector('.grid__column--control');
+            controls.insertBefore(html, controls.firstChild);
+        }
+    }, {
         key: 'getTemplateId',
         value: function getTemplateId() {
             return 'textBlock';
@@ -428,6 +436,7 @@ var TextElement = function (_AbstractElement) {
         key: 'init',
         value: function init() {
             this.initMedium();
+            this.addIconToRow();
         }
     }, {
         key: 'initMedium',
@@ -533,14 +542,6 @@ var GridColumn = function () {
                     _self.addItemsToColumn(item.id, instance);
                 });
             }
-        }
-    }, {
-        key: 'addIconToRow',
-        value: function addIconToRow(item) {
-            var icon = item.innerHTML;
-            var html = GridHelper.parseHTML('<div class="grid__row--icon">' + icon + '</div>')[0];
-            var controls = item.closest('.grid__column').querySelector('.grid__column--control');
-            controls.insertBefore(html, controls.firstChild);
         }
     }, {
         key: 'addItem',
@@ -675,7 +676,6 @@ var GridColumn = function () {
             this.instance.addEventListener('click', function (event) {
                 var target = event.target;
                 if (target.matches('.grid__column--add_item')) {
-                    _self.addIconToRow(target);
                     _self.addItem(target.getAttribute('data-type'));
                 }
                 if (target.matches('.grid__item--control_item')) {

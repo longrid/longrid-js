@@ -128,76 +128,6 @@ var AbstractElement = function () {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var BaseElement = function (_AbstractElement) {
-    _inherits(BaseElement, _AbstractElement);
-
-    function BaseElement() {
-        _classCallCheck(this, BaseElement);
-
-        return _possibleConstructorReturn(this, (BaseElement.__proto__ || Object.getPrototypeOf(BaseElement)).apply(this, arguments));
-    }
-
-    _createClass(BaseElement, [{
-        key: 'getHtmlBlock',
-        value: function getHtmlBlock() {
-            var block = GridHelper.getHtml(this.getTemplateId()).trim();
-            block = GridHelper.parseHTML(block);
-            return block[0];
-        }
-    }, {
-        key: 'getTemplateId',
-        value: function getTemplateId() {
-            return 'baseElement';
-        }
-    }, {
-        key: 'init',
-        value: function init() {
-            this.initMedium();
-        }
-    }, {
-        key: 'initMedium',
-        value: function initMedium() {
-            var placeholder = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'Введите текст...';
-
-            var editor = new MediumEditor('.editable', {
-                toolbar: {
-                    /* These are the default options for the toolbar,
-                     if nothing is passed this is what is used */
-                    allowMultiParagraphSelection: true,
-                    buttons: ['bold', 'italic', 'h3', 'anchor', 'justifyLeft', 'justifyCenter', 'justifyRight', 'removeFormat'],
-                    diffLeft: 0,
-                    diffTop: -10,
-                    firstButtonClass: 'medium-editor-button-first',
-                    lastButtonClass: 'medium-editor-button-last',
-                    standardizeSelectionStart: false,
-                    static: false,
-                    relativeContainer: null,
-                    /* options which only apply when static is true */
-                    align: 'center',
-                    sticky: false,
-                    updateOnEmptySelection: false
-                },
-                placeholder: {
-                    text: placeholder,
-                    hideOnClick: true
-                },
-                imageDragging: false
-            });
-        }
-    }]);
-
-    return BaseElement;
-}(AbstractElement);
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -263,14 +193,6 @@ var GridColumn = function () {
                     _self.addItemsToColumn(item.id, instance);
                 });
             }
-        }
-    }, {
-        key: 'addIconToRow',
-        value: function addIconToRow(item) {
-            var icon = item.innerHTML;
-            var html = GridHelper.parseHTML('<div class="grid__row--icon">' + icon + '</div>')[0];
-            var controls = item.closest('.grid__column').querySelector('.grid__column--control');
-            controls.insertBefore(html, controls.firstChild);
         }
     }, {
         key: 'addItem',
@@ -405,7 +327,6 @@ var GridColumn = function () {
             this.instance.addEventListener('click', function (event) {
                 var target = event.target;
                 if (target.matches('.grid__column--add_item')) {
-                    _self.addIconToRow(target);
                     _self.addItem(target.getAttribute('data-type'));
                 }
                 if (target.matches('.grid__item--control_item')) {

@@ -33,6 +33,12 @@ class TextElement extends AbstractElement {
         }
     }
 
+    addIconToRow() {
+        let icon = this.getIcon();
+        let html = GridHelper.parseHTML('<div class="grid__row--icon">' + icon + '</div>')[0];
+        let controls = this.instance.closest('.grid__column').querySelector('.grid__column--control');
+        controls.insertBefore(html, controls.firstChild);
+    }
     getTemplateId() {
         return 'textBlock';
     }
@@ -56,6 +62,7 @@ class TextElement extends AbstractElement {
 
     init() {
         this.initMedium();
+        this.addIconToRow();
     }
     initMedium(placeholder = 'Введите текст...'){
         let selector = this.instance.querySelector('.editable');

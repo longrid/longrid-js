@@ -50,12 +50,7 @@ class GridColumn {
             })
         }
     }
-    addIconToRow(item) {
-        let icon = item.innerHTML;
-        let html = GridHelper.parseHTML('<div class="grid__row--icon">' + icon + '</div>')[0];
-        let controls = item.closest('.grid__column').querySelector('.grid__column--control');
-        controls.insertBefore(html, controls.firstChild);
-    }
+
 
     addItem(type) {
         let className = this.getGrid().items[type];
@@ -205,7 +200,6 @@ class GridColumn {
         this.instance.addEventListener('click', function (event) {
             let target = event.target;
             if (target.matches('.grid__column--add_item')) {
-                _self.addIconToRow(target);
                 _self.addItem(target.getAttribute('data-type'));
             }
             if (target.matches('.grid__item--control_item')) {
