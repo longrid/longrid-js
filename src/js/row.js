@@ -58,7 +58,7 @@ class GridRow {
         let id = this.getNewElementId();
         let column = new GridColumn(this, defaultColumnWidth);
         if (this.canAddColumn(column.getWidth())) {
-            column.add(id);
+            column.add(id,this.inActionColumn);
             this.addColumnToRow(id, column);
             this.setWidth(column.getWidth(), column.isEmpty());
             if (addItem) {

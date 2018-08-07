@@ -511,11 +511,18 @@ var GridColumn = function () {
     }, {
         key: 'add',
         value: function add(id) {
+            var column = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
             var row = this.row.instance.querySelector('.grid__row--container');
             var block = this.getTemplate(id);
             block = GridHelper.parseHTML(block);
             this.instance = block[0];
+            /*if (column !== null) {
+                column.instance.parentNode.insertBefore(this.instance, column.instance.nextSibling);
+            } else {
+            }*/
             row.appendChild(this.instance);
+
             this.id = id;
             this.init();
         }
@@ -830,7 +837,7 @@ var GridRow = function () {
             var id = this.getNewElementId();
             var column = new GridColumn(this, defaultColumnWidth);
             if (this.canAddColumn(column.getWidth())) {
-                column.add(id);
+                column.add(id, this.inActionColumn);
                 this.addColumnToRow(id, column);
                 this.setWidth(column.getWidth(), column.isEmpty());
                 if (addItem) {
