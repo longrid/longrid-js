@@ -8,7 +8,7 @@ class Grid {
         this.raw = raw;
         this.sortable = null;
         this.options = {
-            columns: 4,
+            columns: 5,
             defaultItem: 'text'
         };
         this.items = {

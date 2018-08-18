@@ -517,11 +517,11 @@ var GridColumn = function () {
             var block = this.getTemplate(id);
             block = GridHelper.parseHTML(block);
             this.instance = block[0];
-            /*if (column !== null) {
+            if (column !== null) {
                 column.instance.parentNode.insertBefore(this.instance, column.instance.nextSibling);
             } else {
-            }*/
-            row.appendChild(this.instance);
+                row.appendChild(this.instance);
+            }
 
             this.id = id;
             this.init();
@@ -702,6 +702,7 @@ var GridColumn = function () {
                         }
                     }
                 }
+                _self.row.updateColumnsOrder();
             });
         }
     }, {
@@ -1001,7 +1002,6 @@ var GridRow = function () {
                     items[arrName].push(item);
                 }
             });
-
             var _iteratorNormalCompletion = true;
             var _didIteratorError = false;
             var _iteratorError = undefined;
@@ -1113,7 +1113,7 @@ var GridRow = function () {
                     _self._temp_sortOrder = null;
                 },
                 onSort: function onSort(evt) {
-                    _self.sortColumns(GridHelper.arrayToSortPattern(_self.sortable.toArray()));
+                    _self.updateColumnsOrder();
                 },
                 onEnd: function onEnd(evt) {
 
@@ -1122,6 +1122,11 @@ var GridRow = function () {
             });
 
             this.sortable = sortable;
+        }
+    }, {
+        key: 'updateColumnsOrder',
+        value: function updateColumnsOrder() {
+            this.sortColumns(GridHelper.arrayToSortPattern(this.sortable.toArray()));
         }
     }, {
         key: 'removeTempWidth',
@@ -1275,7 +1280,7 @@ var Grid = function () {
         this.raw = raw;
         this.sortable = null;
         this.options = {
-            columns: 4,
+            columns: 5,
             defaultItem: 'text'
         };
         this.items = {

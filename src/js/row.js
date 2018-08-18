@@ -221,7 +221,6 @@ class GridRow {
             }
 
         });
-
         for (let item of items.after ) {
             if (item.isEmpty()) {
                 has = item;
@@ -289,7 +288,7 @@ class GridRow {
                 _self._temp_sortOrder = null;
             },
             onSort: function (evt) {
-                _self.sortColumns(GridHelper.arrayToSortPattern(_self.sortable.toArray()));
+                _self.updateColumnsOrder()
             },
             onEnd:function(evt){
 
@@ -299,6 +298,10 @@ class GridRow {
         });
 
         this.sortable = sortable;
+    }
+    updateColumnsOrder(){
+        this.sortColumns(GridHelper.arrayToSortPattern(this.sortable.toArray()));
+
     }
     removeTempWidth(rowInstance){
         this.grid.container.querySelectorAll('.grid__column.empty').forEach(function(item){

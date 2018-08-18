@@ -24,11 +24,12 @@ class GridColumn {
         let block = this.getTemplate(id);
         block = GridHelper.parseHTML(block);
         this.instance = block[0];
-        /*if (column !== null) {
+        if (column !== null) {
             column.instance.parentNode.insertBefore(this.instance, column.instance.nextSibling);
         } else {
-        }*/
-        row.appendChild(this.instance);
+            row.appendChild(this.instance);
+        }
+
 
         this.id = id;
         this.init();
@@ -225,6 +226,7 @@ class GridColumn {
                     }
                 }
             }
+            _self.row.updateColumnsOrder();
         });
     }
 
