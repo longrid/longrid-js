@@ -2,15 +2,16 @@
  * columns can be 2 to 12
  */
 class Grid {
-    constructor(container, raw = null) {
+    constructor(options) {
         this.rows = new Map();
-        this.container = container;
-        this.raw = raw;
+        this.container = options.container;
+        this.raw = options.raw;
         this.sortable = null;
         this.options = {
             columns: 5,
             defaultItem: 'text'
         };
+        Object.assign(this.options, options.other);
         this.items = {
             'text': TextElement
         };
@@ -83,6 +84,7 @@ class Grid {
         if(this.hasRaw()){
             this.initRaw();
         }
+        //console.log('hello');
         this.initButtons();
         this.initSortable();
         // this.initRowIcons();
@@ -91,11 +93,20 @@ class Grid {
         let raw = JSON.parse(this.raw);
         let _self = this;
         if(raw.hasOwnProperty('rows')){
+            this.checkRawOptions(raw);
             raw.rows.forEach(function(row){
                 let grid_row = new GridRow(_self,_self.options.columns);
                 grid_row.addFromRaw(_self.container, row);
                 _self.addRowToGrid(row.id, grid_row);
             });
+        }
+    }
+    checkRawOptions(raw){
+        if(this.container.id !== raw.container){
+            console.warn('wrong container ID');
+        }
+        if(this.options.columns !== raw.options.columns){
+            throw new Error(`This JSON has ${raw.options.columns} columns scheme, when Grid has ${this.options.columns} columns`);
         }
     }
     hasRaw(){
@@ -107,6 +118,7 @@ class Grid {
                 return false
             }
         } catch(err){
+            console.warn(err);
             return false
         }
     }

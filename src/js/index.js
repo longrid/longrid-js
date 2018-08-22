@@ -7,7 +7,10 @@ class Longread{
 
     }
     init(){
-        this.grid =  new Grid(document.getElementById('grid__container'),document.querySelector('textarea').innerHTML);
+        this.grid =  new Grid({
+            container:document.getElementById('grid__container'),
+            raw:document.querySelector('textarea').innerHTML
+        });
         this.grid.init();
         this.initButtons();
     }

@@ -922,19 +922,18 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * columns can be 2 to 12
  */
 var Grid = function () {
-    function Grid(container) {
-        var raw = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-
+    function Grid(options) {
         _classCallCheck(this, Grid);
 
         this.rows = new Map();
-        this.container = container;
-        this.raw = raw;
+        this.container = options.container;
+        this.raw = options.raw;
         this.sortable = null;
         this.options = {
             columns: 5,
             defaultItem: 'text'
         };
+        Object.assign(this.options, options.other);
         this.items = {
             'text': TextElement
         };
@@ -1037,6 +1036,7 @@ var Grid = function () {
             if (this.hasRaw()) {
                 this.initRaw();
             }
+            //console.log('hello');
             this.initButtons();
             this.initSortable();
             // this.initRowIcons();
@@ -1047,11 +1047,22 @@ var Grid = function () {
             var raw = JSON.parse(this.raw);
             var _self = this;
             if (raw.hasOwnProperty('rows')) {
+                this.checkRawOptions(raw);
                 raw.rows.forEach(function (row) {
                     var grid_row = new GridRow(_self, _self.options.columns);
                     grid_row.addFromRaw(_self.container, row);
                     _self.addRowToGrid(row.id, grid_row);
                 });
+            }
+        }
+    }, {
+        key: 'checkRawOptions',
+        value: function checkRawOptions(raw) {
+            if (this.container.id !== raw.container) {
+                console.warn('wrong container ID');
+            }
+            if (this.options.columns !== raw.options.columns) {
+                throw new Error('This JSON has ' + raw.options.columns + ' columns scheme, when Grid has ' + this.options.columns + ' columns');
             }
         }
     }, {
@@ -1065,6 +1076,7 @@ var Grid = function () {
                     return false;
                 }
             } catch (err) {
+                console.warn(err);
                 return false;
             }
         }
