@@ -19,17 +19,9 @@ class Grid {
     }
 
     addItem(name, instance_class) {
-        let instance = new instance_class();
-        for (let name of Object.getOwnPropertyNames(Object.getPrototypeOf((new AbstractElement)))) {
-            let method = instance[name];
-            // Supposedly you'd like to skip constructor
-            if (!(method instanceof Function) || method === instance_class) {
-                if (name !== 'constructor') {
-                    if (typeof instance[name] !== "function") {
-                        throw new Error(`${name}() should be implement`);
-                    }
-                }
-            }
+        let instance = new instance_class(null,null);
+        if(!(instance instanceof AbstractElement)){
+            throw new Error(`${name} should be instanceof AbstractElement`);
         }
         this.items[name] = instance_class;
     }
@@ -160,7 +152,7 @@ class Grid {
         }));
     }
 
-    stringify() {
+    toJson() {
         return JSON.stringify(this.getCleanClone());
     }
 

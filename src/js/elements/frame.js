@@ -10,6 +10,18 @@ class FrameElement extends AbstractElement{
     static getIcon() {
         return '<i class="fa fa-code"></i>';
     }
+    addFromRaw(item){
+        let id = this.column.getNewElementId();
+        //  let content = (new Unescape).do(item.content);
+        let content = Unescape(item.content);
+        //let content = GridHelper.decodeHtml(item.content);
+        let block = this.getHtmlBlock(id,content);
+        let container = this.column.instance.querySelector('.grid__column--container');
+        container.innerHTML = '';
+        container.appendChild(block);
+        this.instance = block;
+        this.init();
+    }
     addIcon() {
         let icon = FrameElement.getIcon();
         let html = GridHelper.parseHTML('<div class="grid__row--icon">' + icon + '</div>')[0];
@@ -39,7 +51,7 @@ class FrameElement extends AbstractElement{
         return {
             type:'frame',
             id:this.id,
-            content:this.instance.querySelector('textarea').innerHTML
+            content:this.instance.querySelector('textarea').value
         }
     }
 

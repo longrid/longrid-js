@@ -951,40 +951,10 @@ var Grid = function () {
     _createClass(Grid, [{
         key: 'addItem',
         value: function addItem(name, instance_class) {
-            var instance = new instance_class();
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
-
-            try {
-                for (var _iterator = Object.getOwnPropertyNames(Object.getPrototypeOf(new AbstractElement()))[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var _name = _step.value;
-
-                    var method = instance[_name];
-                    // Supposedly you'd like to skip constructor
-                    if (!(method instanceof Function) || method === instance_class) {
-                        if (_name !== 'constructor') {
-                            if (typeof instance[_name] !== "function") {
-                                throw new Error(_name + '() should be implement');
-                            }
-                        }
-                    }
-                }
-            } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion && _iterator.return) {
-                        _iterator.return();
-                    }
-                } finally {
-                    if (_didIteratorError) {
-                        throw _iteratorError;
-                    }
-                }
+            var instance = new instance_class(null, null);
+            if (!(instance instanceof AbstractElement)) {
+                throw new Error(name + ' should be instanceof AbstractElement');
             }
-
             this.items[name] = instance_class;
         }
     }, {
@@ -1128,8 +1098,8 @@ var Grid = function () {
             }));
         }
     }, {
-        key: 'stringify',
-        value: function stringify() {
+        key: 'toJson',
+        value: function toJson() {
             return JSON.stringify(this.getCleanClone());
         }
     }]);
