@@ -11,6 +11,7 @@ class Longread{
             container:document.getElementById('grid__container'),
             raw:document.querySelector('textarea').innerHTML
         });
+        this.grid.addItem('frame',FrameElement);
         this.grid.init();
         this.initButtons();
     }

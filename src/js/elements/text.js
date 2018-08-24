@@ -5,7 +5,6 @@ class TextElement extends AbstractElement {
         this.instance = null;
         this.id = id;
         this.type = 'text';
-        this.content = null;
         this.editor = null;
     }
 
@@ -21,7 +20,7 @@ class TextElement extends AbstractElement {
         this.instance = block;
         this.init();
     }
-    getIcon() {
+    static getIcon() {
         return '<i class="fa fa-font"></i>';
     }
 
@@ -34,7 +33,7 @@ class TextElement extends AbstractElement {
     }
 
     addIcon() {
-        let icon = this.getIcon();
+        let icon = TextElement.getIcon();
         let html = GridHelper.parseHTML('<div class="grid__row--icon">' + icon + '</div>')[0];
         let controls = this.instance.closest('.grid__column').querySelector('.grid__column--control');
         controls.insertBefore(html, controls.firstChild);
@@ -56,7 +55,7 @@ class TextElement extends AbstractElement {
             </div>
         </div>`;
     }
-    getTitle() {
+    static getTitle() {
         return "Текст";
     }
 

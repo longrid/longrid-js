@@ -97,13 +97,22 @@ var AbstractElement = function () {
          */
 
     }, {
-        key: "getObject",
+        key: "addFromRaw",
 
         /**
-         * should prepare to create json
+         * create DOM from json
          */
+        value: function addFromRaw(item) {
+            throw new Error("addFromRaw(item) \u0434\u043E\u043B\u0436\u0435\u043D \u0431\u044B\u0442\u044C \u0440\u0435\u0430\u043B\u0438\u0437\u043E\u0432\u0430\u043D");
+        }
+        /**
+            * should prepare to create json
+            */
+
+    }, {
+        key: "getObject",
         value: function getObject() {
-            throw new Error("getCleanClone() \u0434\u043E\u043B\u0436\u0435\u043D \u0431\u044B\u0442\u044C \u0440\u0435\u0430\u043B\u0438\u0437\u043E\u0432\u0430\u043D");
+            throw new Error("getObject() \u0434\u043E\u043B\u0436\u0435\u043D \u0431\u044B\u0442\u044C \u0440\u0435\u0430\u043B\u0438\u0437\u043E\u0432\u0430\u043D");
         }
 
         /**
@@ -205,9 +214,9 @@ var GridColumn = function () {
     }, {
         key: 'addItem',
         value: function addItem(type) {
-            var className = this.getGrid().items[type];
+            var classInstance = this.getGrid().items[type];
             var id = this.getNewElementId();
-            var item = new className(id, this);
+            var item = new classInstance(id, this);
             var block = item.getHtmlBlock(id);
             var container = this.instance.querySelector('.grid__column--container');
             container.innerHTML = '';
@@ -262,7 +271,7 @@ var GridColumn = function () {
             var template = '';
             for (var item in items) {
                 if (items.hasOwnProperty(item)) {
-                    var instance = new items[item]();
+                    var instance = items[item];
                     template += ' <div class="grid__column--add_item" data-type="' + item + '" title="' + instance.getTitle() + '" >\n                       ' + instance.getIcon() + '\n                    </div>';
                 }
             }
@@ -976,7 +985,7 @@ var Grid = function () {
                 }
             }
 
-            this.items[name] = instance;
+            this.items[name] = instance_class;
         }
     }, {
         key: 'addRowBlock',

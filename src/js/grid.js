@@ -31,7 +31,7 @@ class Grid {
                 }
             }
         }
-        this.items[name] = instance;
+        this.items[name] = instance_class;
     }
 
     addRowBlock() {

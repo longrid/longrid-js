@@ -60,9 +60,9 @@ class GridColumn {
 
 
     addItem(type) {
-        let className = this.getGrid().items[type];
+        let classInstance = this.getGrid().items[type];
         let id = this.getNewElementId();
-        let item = new className(id,this);
+        let item = new classInstance(id,this);
         let block = item.getHtmlBlock(id);
         let container = this.instance.querySelector('.grid__column--container');
         container.innerHTML = '';
@@ -115,7 +115,7 @@ class GridColumn {
         let template = ``;
         for (let item in items) {
             if (items.hasOwnProperty(item)) {
-                let instance = new items[item]();
+                let instance = items[item];
                 template += ` <div class="grid__column--add_item" data-type="${item}" title="${instance.getTitle()}" >
                        ${instance.getIcon()}
                     </div>`;

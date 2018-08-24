@@ -14,10 +14,16 @@ class AbstractElement{
         throw new Error(`static initButtons() должен быть реализован`)
     }
     /**
+     * create DOM from json
+     */
+    addFromRaw(item) {
+        throw new Error(`addFromRaw(item) должен быть реализован`)
+    }
+ /**
      * should prepare to create json
      */
     getObject() {
-        throw new Error(`getCleanClone() должен быть реализован`)
+        throw new Error(`getObject() должен быть реализован`)
     }
 
     /**

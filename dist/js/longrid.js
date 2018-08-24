@@ -185,13 +185,22 @@ var AbstractElement = function () {
          */
 
     }, {
-        key: "getObject",
+        key: "addFromRaw",
 
         /**
-         * should prepare to create json
+         * create DOM from json
          */
+        value: function addFromRaw(item) {
+            throw new Error("addFromRaw(item) \u0434\u043E\u043B\u0436\u0435\u043D \u0431\u044B\u0442\u044C \u0440\u0435\u0430\u043B\u0438\u0437\u043E\u0432\u0430\u043D");
+        }
+        /**
+            * should prepare to create json
+            */
+
+    }, {
+        key: "getObject",
         value: function getObject() {
-            throw new Error("getCleanClone() \u0434\u043E\u043B\u0436\u0435\u043D \u0431\u044B\u0442\u044C \u0440\u0435\u0430\u043B\u0438\u0437\u043E\u0432\u0430\u043D");
+            throw new Error("getObject() \u0434\u043E\u043B\u0436\u0435\u043D \u0431\u044B\u0442\u044C \u0440\u0435\u0430\u043B\u0438\u0437\u043E\u0432\u0430\u043D");
         }
 
         /**
@@ -226,24 +235,66 @@ var FrameElement = function (_AbstractElement) {
     _inherits(FrameElement, _AbstractElement);
 
     function FrameElement() {
+        var id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+        var column = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
         _classCallCheck(this, FrameElement);
 
-        return _possibleConstructorReturn(this, (FrameElement.__proto__ || Object.getPrototypeOf(FrameElement)).apply(this, arguments));
+        var _this = _possibleConstructorReturn(this, (FrameElement.__proto__ || Object.getPrototypeOf(FrameElement)).call(this));
+
+        _this.column = column;
+        _this.instance = null;
+        _this.id = id;
+        _this.type = 'frame';
+        _this.content = null;
+        return _this;
     }
 
     _createClass(FrameElement, [{
-        key: 'getTemplateId',
-        value: function getTemplateId() {
-            return 'frameBlock';
+        key: 'addIcon',
+        value: function addIcon() {
+            var icon = FrameElement.getIcon();
+            var html = GridHelper.parseHTML('<div class="grid__row--icon">' + icon + '</div>')[0];
+            var controls = this.instance.closest('.grid__column').querySelector('.grid__column--control');
+            controls.insertBefore(html, controls.firstChild);
         }
     }, {
+        key: 'getHtmlBlock',
+        value: function getHtmlBlock(id) {
+            var content = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+
+            var block = this.getTemplate(id, content);
+            block = GridHelper.parseHTML(block);
+            return block[0];
+        }
+    }, {
+        key: 'getTemplate',
+        value: function getTemplate(id) {
+            var content = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+
+            return '<div class="grid__item" data-type="frame" data-id="' + id + '">\n            <div class="grid__item--frame">\n                <textarea>' + content + '</textarea>\n            </div>\n        </div>';
+        }
+    }, {
+        key: 'init',
+        value: function init() {}
+    }, {
         key: 'getObject',
-        value: function getObject(item) {
+        value: function getObject() {
             return {
-                'type': item.data('type'),
-                'state': item.find('.grid__item--control_item.active').data('type'),
-                'content': item.find('textarea').val()
+                type: 'frame',
+                id: this.id,
+                content: this.instance.querySelector('textarea').innerHTML
             };
+        }
+    }], [{
+        key: 'getIcon',
+        value: function getIcon() {
+            return '<i class="fa fa-code"></i>';
+        }
+    }, {
+        key: 'getTitle',
+        value: function getTitle() {
+            return "iFrame/HTML";
         }
     }]);
 
@@ -365,7 +416,6 @@ var TextElement = function (_AbstractElement) {
         _this.instance = null;
         _this.id = id;
         _this.type = 'text';
-        _this.content = null;
         _this.editor = null;
         return _this;
     }
@@ -385,11 +435,6 @@ var TextElement = function (_AbstractElement) {
             this.init();
         }
     }, {
-        key: 'getIcon',
-        value: function getIcon() {
-            return '<i class="fa fa-font"></i>';
-        }
-    }, {
         key: 'getObject',
         value: function getObject() {
             return {
@@ -401,7 +446,7 @@ var TextElement = function (_AbstractElement) {
     }, {
         key: 'addIcon',
         value: function addIcon() {
-            var icon = this.getIcon();
+            var icon = TextElement.getIcon();
             var html = GridHelper.parseHTML('<div class="grid__row--icon">' + icon + '</div>')[0];
             var controls = this.instance.closest('.grid__column').querySelector('.grid__column--control');
             controls.insertBefore(html, controls.firstChild);
@@ -426,11 +471,6 @@ var TextElement = function (_AbstractElement) {
             var content = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
 
             return '<div class="grid__item" data-type="text" data-id="' + id + '">\n            <div class="grid__item--text">\n                <div class="editable">\n                ' + content + '\n                </div>\n            </div>\n        </div>';
-        }
-    }, {
-        key: 'getTitle',
-        value: function getTitle() {
-            return "Текст";
         }
     }, {
         key: 'init',
@@ -467,6 +507,16 @@ var TextElement = function (_AbstractElement) {
                 },
                 imageDragging: false
             });
+        }
+    }], [{
+        key: 'getIcon',
+        value: function getIcon() {
+            return '<i class="fa fa-font"></i>';
+        }
+    }, {
+        key: 'getTitle',
+        value: function getTitle() {
+            return "Текст";
         }
     }]);
 
@@ -553,9 +603,9 @@ var GridColumn = function () {
     }, {
         key: 'addItem',
         value: function addItem(type) {
-            var className = this.getGrid().items[type];
+            var classInstance = this.getGrid().items[type];
             var id = this.getNewElementId();
-            var item = new className(id, this);
+            var item = new classInstance(id, this);
             var block = item.getHtmlBlock(id);
             var container = this.instance.querySelector('.grid__column--container');
             container.innerHTML = '';
@@ -610,7 +660,7 @@ var GridColumn = function () {
             var template = '';
             for (var item in items) {
                 if (items.hasOwnProperty(item)) {
-                    var instance = new items[item]();
+                    var instance = items[item];
                     template += ' <div class="grid__column--add_item" data-type="' + item + '" title="' + instance.getTitle() + '" >\n                       ' + instance.getIcon() + '\n                    </div>';
                 }
             }
@@ -1324,7 +1374,7 @@ var Grid = function () {
                 }
             }
 
-            this.items[name] = instance;
+            this.items[name] = instance_class;
         }
     }, {
         key: 'addRowBlock',
@@ -1499,6 +1549,7 @@ var Longread = function () {
                 container: document.getElementById('grid__container'),
                 raw: document.querySelector('textarea').innerHTML
             });
+            this.grid.addItem('frame', FrameElement);
             this.grid.init();
             this.initButtons();
         }
